@@ -1,0 +1,6 @@
+[submodule "Myro/vendor/libogg"]
+	path = Myro/vendor/libogg
+	url = https://github.com/gcp/libogg.git
+[submodule "Myro/vendor/vorbis"]
+	path = Myro/vendor/vorbis
+	url = https://github.com/xiph/vorbis.git
