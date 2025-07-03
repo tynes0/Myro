@@ -174,7 +174,7 @@ namespace myro
 			log::warn("Failed to set speed of sound!");
 	}
 
-	audio_state audio_engine::get_state(const std::shared_ptr<audio_source>& source)
+	audio_state audio_engine::state_of(const std::shared_ptr<audio_source>& source)
 	{
 		if (!source || !source->m_loaded)
 		{
