@@ -8,7 +8,7 @@
 
 namespace myro
 {
-	class logger
+	class log
 	{
 	public:
 		template <class... Args>
@@ -62,7 +62,7 @@ namespace myro
 	};
 
 #ifdef MYRO_ENABLE_ASSERTS
-	#define _MYRO_INTERNAL_ASSERT_IMPL(check, msg, ...) do { if(!(check)) {myro::logger::critical(msg, __VA_ARGS__); MYRO_DEBUGBREAK(); } } while(false)
+	#define _MYRO_INTERNAL_ASSERT_IMPL(check, msg, ...) do { if(!(check)) {myro::log::critical(msg, __VA_ARGS__); MYRO_DEBUGBREAK(); } } while(false)
 	#define _MYRO_INTERNAL_ASSERT_WITH_MSG(check, ...)	_MYRO_INTERNAL_ASSERT_IMPL(check, "Myro Assertion failed! File: {0}, Line: {1}, Message: {2}", std::filesystem::path(__FILE__).filename().string(), __LINE__ , __VA_ARGS__)
 	#define _MYRO_INTERNAL_ASSERT_NO_MSG(check)			_MYRO_INTERNAL_ASSERT_IMPL(check, "Myro Assertion '{0}' failed! File: {1}, Line: {2}", MYRO_STRINGIZE(check), std::filesystem::path(__FILE__).filename().string(), __LINE__)
 	#define _MYRO_INTERNAL_ASSERT_GET_MACRO_NAME(arg1, arg2, macro, ...) macro

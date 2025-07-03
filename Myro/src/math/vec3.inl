@@ -92,12 +92,12 @@ namespace myro
 
     inline bool vec3::is_unit(float epsilon) const noexcept
     {
-        return std::abs(magnitude_squared() - 1.0) < epsilon;
+        return std::abs(magnitude_squared() - 1.0f) < epsilon;
     }
 
     inline constexpr vec3 vec3::lerp(const vec3& target, float t) const noexcept
     {
-        return *this * (1.0 - t) + target * t;
+        return *this * (1.0f - t) + target * t;
     }
 
     inline constexpr vec3 vec3::clamp(const vec3& min, const vec3& max) const
@@ -149,14 +149,14 @@ namespace myro
     {
         float nmag = normal.magnitude_squared();
         if (nmag < std::numeric_limits<float>::epsilon()) return *this;
-        return *this - normal * (2.0 * dot(normal) / nmag);
+        return *this - normal * (2.0f * dot(normal) / nmag);
     }
 
     inline vec3 vec3::refract(const vec3& normal, float eta1, float eta2) const
     {
         float n_dot_i = dot(normal);
-        float k = 1.0 - (eta1 / eta2) * (eta1 / eta2) * (1.0 - n_dot_i * n_dot_i);
-        if (k < 0.0)
+        float k = 1.0f - (eta1 / eta2) * (eta1 / eta2) * (1.0f - n_dot_i * n_dot_i);
+        if (k < 0.0f)
             return zero;
         return (*this - normal * n_dot_i) * (eta1 / eta2) - normal * std::sqrt(k);
     }
@@ -167,7 +167,7 @@ namespace myro
         float vx = x, vy = y, vz = z;
         float cos_theta = std::cos(angle);
         float sin_theta = std::sin(angle);
-        float one_minus_cos = 1.0 - cos_theta;
+        float one_minus_cos = 1.0f - cos_theta;
         
         return vec3(
             vx * (kx * kx * one_minus_cos + cos_theta) + vy * (kx * ky * one_minus_cos - kz * sin_theta) + vz * (kx * kz * one_minus_cos + ky * sin_theta),
@@ -179,14 +179,14 @@ namespace myro
     inline constexpr vec3 vec3::smoothstep(const vec3& target, float t) const noexcept
     {
         float clamped_t = std::clamp(t, 0.0f, 1.0f);
-        float smooth_t = clamped_t * clamped_t * (3.0 - 2.0 * clamped_t);
+        float smooth_t = clamped_t * clamped_t * (3.0f - 2.0f * clamped_t);
         return lerp(target, smooth_t);
     }
 
     inline constexpr vec3 vec3::smootherstep(const vec3& target, float t) const noexcept
     {
         float clamped_t = std::clamp(t, 0.0f, 1.0f);
-        float smooth_t = clamped_t * clamped_t * clamped_t * (t * (t * 6.0 - 15.0) + 10.0);
+        float smooth_t = clamped_t * clamped_t * clamped_t * (t * (t * 6.0f - 15.0f) + 10.0f);
         return lerp(target, smooth_t);
     }
 

@@ -47,9 +47,10 @@ namespace myro
 			size = 0;
 		}
 
-		uint8_t* unbound()
+		template<typename T = uint8_t>
+		T* unbound()
 		{
-			uint8_t* buf = data;
+			T* buf = (T*)data;
 			data = nullptr;
 			size = 0;
 			return buf;

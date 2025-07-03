@@ -12,15 +12,12 @@ project "myro"
 		"src/**.h",
 		"src/**.cpp",
 		"vendor/coco/**.h",
-		"vendor/frenum/**.h",
 		"vendor/miniaudio/**.h",
 		"vendor/miniaudio/**.cpp",
 		"vendor/minimp3/**.h",
 		"vendor/minimp3/**.cpp",
 		"vendor/dtlog/**.h",
 		"vendor/dtlog/**.cpp",
-		"vendor/alhelpers/**.cpp",
-		"vendor/alhelpers/**.h",
 	}
 
 	defines
@@ -33,7 +30,6 @@ project "myro"
 	{
 		"src",
 		"%{IncludeDir.coco}",
-		"%{IncludeDir.frenum}",
 		"%{IncludeDir.dtlog}",
 		"%{IncludeDir.miniaudio}",
 		"%{IncludeDir.libogg}",
@@ -42,7 +38,6 @@ project "myro"
 		"%{IncludeDir.OpenAL_Soft_include}",
 		"%{IncludeDir.OpenAL_Soft_src}",
 		"%{IncludeDir.OpenAL_Soft_src_common}",
-		"%{IncludeDir.alhelpers}"
 	}
 
 	links

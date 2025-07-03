@@ -120,7 +120,7 @@ namespace myro
 
 	inline constexpr vec2 vec2::lerp(const vec2& target, float t) const noexcept
 	{
-		return (*this) * (1.0 - t) + target * t;
+		return (*this) * (1.0f - t) + target * t;
 	}
 
 	inline constexpr vec2 vec2::clamp(const vec2& min, const vec2& max) const
@@ -165,7 +165,7 @@ namespace myro
 		if (std::fabs(normal_mag_sq) < std::numeric_limits<float>::epsilon())
 			return *this;
 
-		return *this - normal * (2.0 * this->dot(normal) / normal_mag_sq);
+		return *this - normal * (2.0f * this->dot(normal) / normal_mag_sq);
 	}
 
 	inline constexpr vec2 vec2::perpendicular() const noexcept
@@ -180,12 +180,12 @@ namespace myro
 
 	inline constexpr bool vec2::is_one_of_zero() const noexcept
 	{
-		return (x == 0.0 || y == 0.0);
+		return (x == 0.0f || y == 0.0f);
 	}
 
 	inline constexpr bool vec2::is_zero() const noexcept
 	{
-		return (x == 0.0 && y == 0.0);
+		return (x == 0.0f && y == 0.0f);
 	}
 
 	inline bool vec2::is_nan() const noexcept

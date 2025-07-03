@@ -7,8 +7,6 @@ IncludeDir["minimp3"] = "%{wks.location}/myro/vendor/minimp3"
 IncludeDir["OpenAL_Soft_include"] = "%{wks.location}/myro/vendor/OpenAL-Soft/include"
 IncludeDir["OpenAL_Soft_src"] = "%{wks.location}/myro/vendor/OpenAL-Soft/src"
 IncludeDir["OpenAL_Soft_src_common"] = "%{wks.location}/myro/vendor/OpenAL-Soft/src/common"
-IncludeDir["alhelpers"] = "%{wks.location}/myro/vendor/alhelpers"
 
 IncludeDir["coco"] = "%{wks.location}/myro/vendor/coco"
-IncludeDir["frenum"] = "%{wks.location}/myro/vendor/frenum"
 IncludeDir["dtlog"] = "%{wks.location}/myro/vendor/dtlog"
