@@ -3,7 +3,7 @@
 #include <string>
 #include <filesystem>
 
-#include "formatter.h"
+#include "../util/formatter.h"
 #include "base.h"
 
 namespace myro
@@ -72,4 +72,6 @@ namespace myro
 #else //MYRO_ENABLE_ASSERTS
 	#define MYRO_ASSERT(x, ...)				// Myro assert not enabled
 #endif //MYRO_ENABLE_ASSERTS
+
+#define MYRO_UNIMPLAMENTED() MYRO_ASSERT(false, "ERROR: Unimplamented method called!");
 }

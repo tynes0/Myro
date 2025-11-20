@@ -8,10 +8,18 @@
 
 namespace myro
 {
-	void wav_loader::init()
+	void wav_loader::init(bool debug_log)
 	{
+		MYRO_UNUSED(debug_log);
 		// miniaudio does not need a basic initialization 
 		// as it requires a separate initialization for each file.
+	}
+
+	void wav_loader::shutdown(bool debug_log)
+	{
+		MYRO_UNUSED(debug_log);
+		// For the same reasons as the init method,
+		// there is no need to shutdown either.
 	}
 
 	raw_buffer wav_loader::load(const std::filesystem::path& filepath, bool debug_log)
@@ -39,6 +47,10 @@ namespace myro
 		}
 
 		size_t buffer_size = decoder.outputChannels * total_frames * sizeof(ma_int16);
+
+		if (debug_log)
+			detail::display_file_info(fname, decoder.outputChannels, decoder.outputSampleRate, buffer_size);
+
 		raw_buffer buffer(buffer_size);
 		size_t frames_read = 0;
 		result = ma_decoder_read_pcm_frames(&decoder, buffer.as<void>(), total_frames, &frames_read);
@@ -52,9 +64,6 @@ namespace myro
 
 		if (frames_read != total_frames)
 			log::warn("Not all frames were read. Expected {}, got {}", total_frames, frames_read);
-
-		if (debug_log)
-			detail::display_file_info(fname, decoder.outputChannels, decoder.outputSampleRate, buffer_size);
 
 		ALenum al_format = openal_backend::get_openAL_format(decoder.outputChannels);
 

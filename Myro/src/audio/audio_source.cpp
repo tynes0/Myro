@@ -20,7 +20,30 @@ namespace myro
 
 	audio_source::~audio_source()
 	{
-		// TODO: free openal audio source 
+		unload();
+	}
+
+	void audio_source::unload()
+	{
+		if (m_loaded && audio_engine::is_active())
+		{
+			alSourceStop(m_source_handle);
+			alSourcei(m_source_handle, AL_BUFFER, 0);
+
+			ALuint buffer = m_buffer_handle;
+			if (buffer != 0)
+				alDeleteBuffers(1, &buffer);
+
+			alDeleteSources(1, &m_source_handle);
+
+			m_source_handle = 0;
+			m_buffer_handle = 0;
+			m_loaded = false;
+			m_total_duration = 0.0f;
+
+			if (alGetError() != AL_NO_ERROR)
+				log::error("Failed to unload audio source.");
+		}
 	}
 
 	void audio_source::set_position(const vec3& pos)

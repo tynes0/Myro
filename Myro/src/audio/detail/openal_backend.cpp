@@ -2,8 +2,17 @@
 
 #include "../../core/log.h"
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 5030)
+#endif // _MSC_VER
+
 #include <AL/alext.h>
 #include <alc/alcmain.h>
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif // _MSC_VER 
 
 namespace myro
 {
@@ -60,15 +69,15 @@ namespace myro
         alcCloseDevice(device);
     }
 
-    ALenum openal_backend::get_openAL_format(uint32_t channels)
+    ALenum openal_backend::get_openAL_format(uint32_t channels, uint32_t bits_per_sample)
     {
         // Note: sample size is always 2 bytes (16-bits) 
         // with the decoders that we're using
 
         switch (channels)
         {
-        case 1: return AL_FORMAT_MONO16;
-        case 2: return AL_FORMAT_STEREO16;
+        case 1: return bits_per_sample == 8 ? AL_FORMAT_MONO8 : AL_FORMAT_MONO16;
+        case 2: return bits_per_sample == 8 ? AL_FORMAT_STEREO8 : AL_FORMAT_STEREO16;
         }
 
         MYRO_ASSERT(false, "Unsupported channels!");

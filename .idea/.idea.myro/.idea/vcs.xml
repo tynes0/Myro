@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Myro/vendor/flac" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Myro/vendor/libogg" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Myro/vendor/opus" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Myro/vendor/opusfile" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Myro/vendor/speex" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Myro/vendor/vorbis" vcs="Git" />
+  </component>
+</project>

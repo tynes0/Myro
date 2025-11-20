@@ -8,6 +8,9 @@
 
 namespace myro
 {
+	struct shallow_copy{};
+	struct deep_copy{};
+
 	// Non-owning raw buffer class
 	struct raw_buffer
 	{
@@ -17,16 +20,83 @@ namespace myro
 		raw_buffer() = default;
 		raw_buffer(uint64_t size_in) { allocate(size_in); }
 		raw_buffer(const void* data_in, uint64_t size_in) : data((uint8_t*)data_in), size(size_in) {}
-		raw_buffer(const raw_buffer&) = default;
-		raw_buffer& operator=(const raw_buffer&) = default;
 		raw_buffer(nullptr_t) {};
 		raw_buffer& operator=(nullptr_t) { release(); };
+
+		raw_buffer(const raw_buffer& other, deep_copy = deep_copy{})
+		{
+			if (other.data && other.size > 0)
+			{
+				allocate(other.size);
+				std::memcpy(data, other.data, size);
+			}
+			else 
+			{
+				data = nullptr;
+				size = 0;
+			}
+		}
+
+		raw_buffer(const raw_buffer& other, shallow_copy)
+		{
+			data = other.data;
+			size = other.size;
+		}
+
+		// Deep copy assignment
+		raw_buffer& operator=(const raw_buffer& other) 
+		{
+			if (this != &other) 
+			{
+				if (other.data && other.size > 0) 
+				{
+					allocate(other.size);
+					std::memcpy(data, other.data, size);
+				}
+				else 
+				{
+					release();
+				}
+			}
+			return *this;
+		}
+
+		// Move constructor
+		raw_buffer(raw_buffer&& other) noexcept 
+		{
+			data = other.data;
+			size = other.size;
+			other.data = nullptr;
+			other.size = 0;
+		}
+
+		// Move assignment
+		raw_buffer& operator=(raw_buffer&& other) noexcept 
+		{
+			if (this != &other) 
+			{
+				release();
+				data = other.data;
+				size = other.size;
+				other.data = nullptr;
+				other.size = 0;
+			}
+			return *this;
+		}
 
 		static raw_buffer copy(raw_buffer other)
 		{
 			raw_buffer result(other.size);
 			std::memcpy(result.data, other.data, other.size);
 			return result;
+		}
+
+		raw_buffer& shallow_copy(raw_buffer other)
+		{
+			release();
+			data = other.data;
+			size = other.size;
+			return *this;
 		}
 
 		void allocate(uint64_t size_in)
@@ -40,9 +110,19 @@ namespace myro
 			size = size_in;
 		}
 
+		void reallocate(uint64_t size_in)
+		{
+			if (size_in == size) return;
+			void* temp_data = realloc(data, size_in);
+			MYRO_ASSERT(temp_data, "Memory allocation failed!");
+			data = reinterpret_cast<uint8_t*>(temp_data);
+			size = size_in;
+		}
+
 		void release()
 		{
-			delete[] data;
+			if(data)
+				delete[] data;
 			data = nullptr;
 			size = 0;
 		}

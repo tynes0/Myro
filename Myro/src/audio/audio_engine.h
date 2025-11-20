@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <vector>
 #include <memory>
 
 #include "audio_source.h"
@@ -15,8 +16,19 @@ namespace myro
 		static void init();
 		static void shutdown();
 
+		static bool is_active();
+
+		static void set_thread_count(uint32_t count);
+		static uint32_t get_thread_count();
+		static uint32_t get_max_thread_count();
+
 		static std::shared_ptr<audio_source> load_audio_source(const std::filesystem::path& filepath);
-		static void unload_audio_source(std::shared_ptr<audio_source> source);
+		static std::vector<std::shared_ptr<audio_source>> multi_load_audio_source(const std::vector<std::filesystem::path>& filepaths);
+
+		static void unload_audio_source(const std::shared_ptr<audio_source>& source);
+		static void multi_unload_audio_source(const std::vector<std::shared_ptr<audio_source>>& sources);
+
+		static void cleanup_expired_sources();
 
 		static void play(const std::shared_ptr<audio_source>& source);
 		static void stop(const std::shared_ptr<audio_source>& source);

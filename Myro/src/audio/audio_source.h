@@ -7,7 +7,7 @@
 #include <string>
 #include <memory>
 
-namespace myro
+namespace myro 
 {
 	class audio_source
 	{
@@ -17,6 +17,8 @@ namespace myro
 		audio_source(audio_source&&) = default;
 		audio_source& operator=(const audio_source&) = default;
 		~audio_source();
+
+		void unload();
 
 		void set_position(const vec3& pos);
 		void set_gain(float gain);

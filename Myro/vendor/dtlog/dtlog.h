@@ -22,6 +22,7 @@
 #include <string>    // @brief Include for std::string.
 #include <sstream>   // @brief Include for std::ostringstream.
 #include <iomanip>   // @brief Include for std::setw and std::setfill.
+#include <mutex>     // @brief Include for std::mutex and std::lock_guard
 
 #if _HAS_NODISCARD
 #define DTLOG_NODISCARD [[nodiscard]]  // @brief If _HAS_NODISCARD is defined, DTLOG_NODISCARD expands to [[nodiscard]].
@@ -678,6 +679,8 @@ namespace dtlog
         template <class ..._Args>
         void log(log_level level, const std::string& message, _Args&&... args)
         {
+            std::lock_guard<std::mutex> lock(log_mutex);
+
             std::string formatted_message = formatter::format(message, std::forward<_Args>(args)...);
             std::string log_message;
             pattern(level, formatted_message, log_message);
@@ -697,6 +700,8 @@ namespace dtlog
         template <class ..._Args>
         void log_stderr(log_level level, const std::string& message, _Args&&... args)
         {
+            std::lock_guard<std::mutex> lock(log_mutex);
+
             std::string formatted_message = formatter::format(message, std::forward<_Args>(args)...);
             std::string log_message;
             pattern(level, formatted_message, log_message);
@@ -716,6 +721,8 @@ namespace dtlog
         template <class ..._Args>
         void log_to_file(const std::string& filename, const std::string& message, _Args&&... args)
         {
+            std::lock_guard<std::mutex> lock(log_mutex);
+
             FILE* file = std::fopen(filename.c_str(), "a+");
             if (!file)
                 return; // It was not successful, but instead of assertion, we just return. We don't simply log to file.
@@ -733,6 +740,8 @@ namespace dtlog
         template <class ..._Args>
         void log_to_file(FILE* file, const std::string& message, _Args&&... args)
         {
+            std::lock_guard<std::mutex> lock(log_mutex);
+
             if (!file)
                 return; // It was not successful, but instead of assertion, we just return. We don't simply log to file.
             std::string formatted_message = formatter::format(message, std::forward<_Args>(args)...);
@@ -746,6 +755,8 @@ namespace dtlog
          */
         void set_name(const std::string& name)
         {
+            std::lock_guard<std::mutex> lock(log_mutex);
+
             log_name = name;
         }
 
@@ -755,6 +766,8 @@ namespace dtlog
          */
         DTLOG_NODISCARD std::string get_name() const
         {
+            std::lock_guard<std::mutex> lock(log_mutex);
+
             return log_name;
         }
 
@@ -764,6 +777,8 @@ namespace dtlog
          */
         void set_pattern(const std::string& format)
         {
+            std::lock_guard<std::mutex> lock(log_mutex);
+
             log_pattern = format;
         }
 
@@ -773,6 +788,8 @@ namespace dtlog
          */
         DTLOG_NODISCARD std::string get_pattern() const
         {
+            std::lock_guard<std::mutex> lock(log_mutex);
+
             return log_pattern;
         }
 
@@ -951,7 +968,8 @@ namespace dtlog
         void set_stderr_color(log_level level);
 
     private:
-        std::string log_name;       // The name of the logger
-        std::string log_pattern;    // The log message pattern
+        std::string log_name;         // The name of the logger
+        std::string log_pattern;      // The log message pattern
+        mutable std::mutex log_mutex; // The log mutex 
     };
 } // namespace dtlog

@@ -53,3 +53,20 @@
 #ifdef MYRO_DEBUG
 #define MYRO_ENABLE_ASSERTS  // Myro asserts enabled
 #endif
+
+namespace myro
+{
+	template <typename T, uint64_t Size>
+	concept BitSizeType = std::is_integral_v<T> && ((sizeof(T) * 8) > Size);
+	
+	namespace constants
+	{
+		template <uint64_t Exponent, typename T = uint8_t>
+			requires BitSizeType<T, Exponent>
+		inline constexpr T bit = static_cast<T>(1 << Exponent);
+
+		inline constexpr size_t initial_scratch_buffer_size = (static_cast<size_t>(10) * 1024 * 1024); // 10 MB
+		inline constexpr size_t pcm_flt_buffer_size = 1024; // I am not sure about that
+		inline constexpr size_t pcm_buffer_size = 1024; // I am not sure about that
+	}
+}

@@ -9,7 +9,8 @@ namespace myro
     class wav_loader
     {
     public:
-        static void init();
+        static void init(bool debug_log = false);
+        static void shutdown(bool debug_log = false);
         static raw_buffer load(const std::filesystem::path& filepath, bool debug_log = false);
     };
 }

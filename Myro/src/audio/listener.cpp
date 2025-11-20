@@ -5,6 +5,8 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 
+#include <array>
+
 namespace myro
 {
 	struct listener_data
@@ -20,9 +22,9 @@ namespace myro
 
 	namespace detail 
 	{
-		static float* as_orientation(const vec3& forward, const vec3& up)
+		static std::array<float, 6> as_orientation(const vec3& forward, const vec3& up)
 		{
-			float result[] 
+			std::array<float, 6> result 
 			{ 
 				forward.x, forward.y, forward.z,
 				up.x, up.y, up.z
@@ -41,7 +43,7 @@ namespace myro
 
 		alListenerfv(AL_POSITION, s_data.position.v);
 		alListenerfv(AL_VELOCITY, s_data.velocity.v);
-		alListenerfv(AL_ORIENTATION, detail::as_orientation(s_data.forward, s_data.up));
+		alListenerfv(AL_ORIENTATION, detail::as_orientation(s_data.forward, s_data.up).data());
 	}
 
 	void listener::init(const vec3& position, const vec3& velocity, const vec3& forward, const vec3& up)
@@ -53,7 +55,7 @@ namespace myro
 
 		alListenerfv(AL_POSITION, s_data.position.v);
 		alListenerfv(AL_VELOCITY, s_data.velocity.v);
-		alListenerfv(AL_ORIENTATION, detail::as_orientation(s_data.forward, s_data.up));
+		alListenerfv(AL_ORIENTATION, detail::as_orientation(s_data.forward, s_data.up).data());
 	}
 
 	void listener::set_position(const vec3& position)
@@ -74,14 +76,14 @@ namespace myro
 	{
 		s_data.forward = forward;
 
-		alListenerfv(AL_ORIENTATION, detail::as_orientation(s_data.forward, s_data.up));
+		alListenerfv(AL_ORIENTATION, detail::as_orientation(s_data.forward, s_data.up).data());
 	}
 
 	void listener::set_up(const vec3& up)
 	{
 		s_data.up = up;
 
-		alListenerfv(AL_ORIENTATION, detail::as_orientation(s_data.forward, s_data.up));
+		alListenerfv(AL_ORIENTATION, detail::as_orientation(s_data.forward, s_data.up).data());
 	}
 
 	void listener::set_orientation(const vec3& forward, const vec3& up)
@@ -89,7 +91,7 @@ namespace myro
 		s_data.forward = forward;
 		s_data.up = up;
 
-		alListenerfv(AL_ORIENTATION, detail::as_orientation(s_data.forward, s_data.up));
+		alListenerfv(AL_ORIENTATION, detail::as_orientation(s_data.forward, s_data.up).data());
 	}
 
 	vec3 listener::get_position()

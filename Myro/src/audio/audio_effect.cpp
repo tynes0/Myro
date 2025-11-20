@@ -1,10 +1,17 @@
 #include "audio_effect.h"
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable:  5030)
+#endif // _MSC_VER
 #define AL_ALEXT_PROTOTYPES
 #include <AL/al.h>
 #include <AL/alext.h>
 #include <alc/alcmain.h>
 #include <AL/efx.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif // _MSC_VER
 
 #include <unordered_map>
 

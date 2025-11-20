@@ -2,15 +2,18 @@
 
 #include <fstream>
 #include <string_view>
+#include <cmath>
 
 #include "../detail/audio_data.h"
 #include "../detail/detail.h"
 #include "../detail/openal_backend.h"
 
+#include "opus_loader.h"
+#include "speex_loader.h"
+#include "flac_loader.h"
+
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
-
-#define INITIAL_SCRATCH_BUFFER_SIZE 10 * 1024 * 1024 // 10 mb
 
 namespace myro
 {
@@ -19,16 +22,20 @@ namespace myro
         raw_buffer audio_scratch_buffer;
     };
 
-    static ogg_loader_data s_data;
+    thread_local ogg_loader_data s_data;
 
-    static bool find_case_insensitive(std::string_view haystack, std::string_view needle) {
-        if (needle.size() > haystack.size()) return false;
+    static bool find_case_insensitive(std::string_view haystack, std::string_view needle) 
+    {
+        if (needle.size() > haystack.size())
+            return false;
 
-        for (size_t i = 0; i <= haystack.size() - needle.size(); ++i) {
+        for (size_t i = 0; i <= haystack.size() - needle.size(); ++i) 
+        {
             bool match = true;
-            for (size_t j = 0; j < needle.size(); ++j) {
-                if (std::tolower(static_cast<unsigned char>(haystack[i + j])) !=
-                    std::tolower(static_cast<unsigned char>(needle[j]))) {
+            for (size_t j = 0; j < needle.size(); ++j)
+            {
+                if (std::tolower(static_cast<unsigned char>(haystack[i + j])) != std::tolower(static_cast<unsigned char>(needle[j]))) 
+                {
                     match = false;
                     break;
                 }
@@ -36,6 +43,14 @@ namespace myro
             if (match) return true;
         }
         return false;
+    }
+
+    static bool compare_case_insensitive(const char* left, const char* right, size_t size)
+    {
+        for (size_t i = 0; i < size; ++i)
+            if (std::tolower(left[i]) != std::tolower(right[i]))
+                return false;
+        return true;
     }
 
     static raw_buffer load_vorbis(const std::filesystem::path& filepath, bool debug_log)
@@ -65,8 +80,8 @@ namespace myro
         if (s_data.audio_scratch_buffer.size < buffer_size)
             s_data.audio_scratch_buffer.allocate(buffer_size);
 
-        raw_buffer ogg_buffer = s_data.audio_scratch_buffer;
-        raw_buffer buffer_ptr = ogg_buffer;
+        raw_buffer ogg_buffer(s_data.audio_scratch_buffer, shallow_copy{});
+        raw_buffer buffer_ptr(ogg_buffer, shallow_copy{});
 
         int eof = 0;
 
@@ -107,68 +122,16 @@ namespace myro
         return buf;
     }
 
-    static raw_buffer load_opus(const std::filesystem::path& filepath, bool debug_log)
+    void ogg_loader::init(bool debug_log)
     {
-        return raw_buffer();
+        MYRO_UNUSED(debug_log);
+        s_data.audio_scratch_buffer.allocate(constants::initial_scratch_buffer_size);
     }
 
-    static raw_buffer load_speex(const std::filesystem::path& filepath, bool debug_log)
+    void ogg_loader::shutdown(bool debug_log)
     {
-        return raw_buffer();
-    }
-
-    static raw_buffer load_flac(const std::filesystem::path& filepath, bool debug_log)
-    {
-        return raw_buffer();
-    }
-
-    void ogg_loader::init()
-    {
-        s_data.audio_scratch_buffer.allocate(INITIAL_SCRATCH_BUFFER_SIZE);
-    }
-
-    ogg_codec_type ogg_loader::detect_ogg_codec_robust(const std::filesystem::path& path)
-    {
-        std::ifstream file(path, std::ios::binary);
-        if (!file) 
-            return ogg_codec_type::unknown;
-
-        char page_header[27] = {};
-        file.read(page_header, sizeof(page_header));
-        if (file.gcount() < 27) 
-            return ogg_codec_type::unknown;
-
-        if (std::string_view(page_header, 4) != "OggS") 
-            return ogg_codec_type::unknown;
-
-        uint8_t segment_count = static_cast<uint8_t>(page_header[26]);
-        std::vector<uint8_t> lacing_values(segment_count);
-        file.read(reinterpret_cast<char*>(lacing_values.data()), segment_count);
-
-        if (file.gcount() < segment_count) 
-            return ogg_codec_type::unknown;
-
-        size_t payload_size = 0;
-        for (auto len : lacing_values) 
-            payload_size += len;
-
-        std::vector<char> payload(payload_size);
-        file.read(payload.data(), payload_size);
-        if (file.gcount() < static_cast<std::streamsize>(payload_size))
-            return ogg_codec_type::unknown;
-
-        std::string_view data(payload.data(), payload.size());
-
-        if (data.find("OpusHead") != std::string_view::npos)
-            return ogg_codec_type::opus;
-        if (data.find("vorbis") != std::string_view::npos)
-            return ogg_codec_type::vorbis;
-        if (find_case_insensitive(data, "Speex"))
-            return ogg_codec_type::speex;
-        if (find_case_insensitive(data, "FLAC")) 
-            return ogg_codec_type::flac;
-
-        return ogg_codec_type::unknown;
+        MYRO_UNUSED(debug_log);
+        s_data.audio_scratch_buffer.release();
     }
 
     raw_buffer myro::ogg_loader::load(const std::filesystem::path& path, bool debug_log)
@@ -178,9 +141,9 @@ namespace myro
         switch (codec_type)
         {
         case myro::ogg_codec_type::vorbis: return load_vorbis(path, debug_log);
-        case myro::ogg_codec_type::opus:   return load_opus(path, debug_log);
-        case myro::ogg_codec_type::speex:  return load_speex(path, debug_log);
-        case myro::ogg_codec_type::flac:   return load_flac(path, debug_log);
+        case myro::ogg_codec_type::opus:   return opus_loader::load_ogg_opus(path, debug_log);
+        case myro::ogg_codec_type::speex:  return speex_loader::load_ogg_speex(path, debug_log);
+        case myro::ogg_codec_type::flac:   return flac_loader::load_ogg_flac(path, debug_log);
         case myro::ogg_codec_type::unknown:
         default:
             log::error("Unknown codec type! File: {}", path);
@@ -188,5 +151,59 @@ namespace myro
         }
 
         audio_data data;
+    }
+
+    ogg_codec_type ogg_loader::detect_ogg_codec_robust(const std::filesystem::path& path)
+    {
+        std::ifstream file(path, std::ios::binary);
+        if (!file)
+            return ogg_codec_type::unknown;
+
+        char page_header[27] = {};
+        file.read(page_header, sizeof(page_header));
+        if (file.gcount() < 27)
+            return ogg_codec_type::unknown;
+
+        if (std::string_view(page_header, 4) != "OggS")
+            return ogg_codec_type::unknown;
+
+        uint8_t segment_count = static_cast<uint8_t>(page_header[26]);
+        std::vector<uint8_t> lacing_values(segment_count);
+        file.read(reinterpret_cast<char*>(lacing_values.data()), segment_count);
+
+        if (file.gcount() < segment_count)
+            return ogg_codec_type::unknown;
+
+        size_t payload_size = 0;
+        for (auto len : lacing_values)
+            payload_size += len;
+
+        std::vector<char> payload(payload_size);
+        file.read(payload.data(), payload_size);
+        if (file.gcount() < static_cast<std::streamsize>(payload_size))
+            return ogg_codec_type::unknown;
+
+        std::string_view data(payload.data(), payload.size());
+
+        if (find_case_insensitive(data, "OpusHead"))
+            return ogg_codec_type::opus;
+        if (find_case_insensitive(data, "vorbis"))
+            return ogg_codec_type::vorbis;
+        if (find_case_insensitive(data, "Speex"))
+            return ogg_codec_type::speex;
+        if (find_case_insensitive(data, "FLAC"))
+            return ogg_codec_type::flac;
+
+        return ogg_codec_type::unknown;
+    }
+
+    bool ogg_loader::is_ogg_container(const std::filesystem::path& path)
+    {
+        std::ifstream file(path, std::ios::binary);
+        if (!file) return false;
+
+        char magic[4] = {};
+        file.read(magic, 4);
+        return file.gcount() == 4 && std::memcmp(magic, "OggS", 4) == 0;
     }
 }

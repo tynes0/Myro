@@ -11,6 +11,7 @@ project "myro"
 	{
 		"src/**.h",
 		"src/**.cpp",
+		"src/**.inl",
 		"vendor/coco/**.h",
 		"vendor/miniaudio/**.h",
 		"vendor/miniaudio/**.cpp",
@@ -23,7 +24,8 @@ project "myro"
 	defines
 	{
 		"_CRT_SECURE_NO_WARNINGS",
-		"AL_LIBTYPE_STATIC"
+		"AL_LIBTYPE_STATIC",
+        "FLAC__NO_DLL",
 	}
 
 	includedirs
@@ -34,6 +36,10 @@ project "myro"
 		"%{IncludeDir.miniaudio}",
 		"%{IncludeDir.libogg}",
 		"%{IncludeDir.Vorbis}",
+		"%{IncludeDir.Opus}",
+		"%{IncludeDir.OpusFile}",
+		"%{IncludeDir.Speex}",
+		"%{IncludeDir.Flac}",
 		"%{IncludeDir.minimp3}",
 		"%{IncludeDir.OpenAL_Soft_include}",
 		"%{IncludeDir.OpenAL_Soft_src}",
@@ -44,19 +50,15 @@ project "myro"
 	{
 		"OpenAL-Soft",
 		"Vorbis",
+		"Opus",
+		"OpusFile",
+		"Speex",
+		"FLAC"
 	}
 
 	filter "system:windows"
 		systemversion "latest"
 
-		defines
-		{
-			
-		}
-
-		links
-		{
-		}
 
 	filter "configurations:Debug"
 		defines "MYRO_DEBUG"

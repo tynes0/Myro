@@ -4,3 +4,15 @@
 [submodule "Myro/vendor/vorbis"]
 	path = Myro/vendor/vorbis
 	url = https://github.com/tynes0/vorbis.git
+[submodule "myro/vendor/speex"]
+	path = myro/vendor/speex
+	url = https://github.com/tynes0/speex.git
+[submodule "myro/vendor/flac"]
+	path = myro/vendor/flac
+	url = https://github.com/tynes0/flac.git
+[submodule "myro/vendor/opus"]
+	path = myro/vendor/opus
+	url = https://github.com/tynes0/opus.git
+[submodule "myro/vendor/opusfile"]
+	path = myro/vendor/opusfile
+	url = https://github.com/tynes0/opusfile.git
