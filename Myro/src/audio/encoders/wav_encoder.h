@@ -1,25 +1,25 @@
 #pragma once
 
-#include "iencoder.h"
+#include "IEncoder.h"
 #include <memory>
 
 namespace myro
 {
-	class wav_encoder : public Iencoder
+	class wav_encoder : public IEncoder
 	{
 	public:
 		static std::shared_ptr<wav_encoder> create() { return std::make_shared<wav_encoder>(); }
 
 		bool init(const std::filesystem::path& output_filepath, unsigned int sample_rate, unsigned int channels) override;
-		void uninit() override;
+		void deinit() override;
 
-		virtual bool initialized() const override;
+		[[nodiscard]] bool initialized() const override;
 
-		uint32_t get_sample_rate() const override { return m_sample_rate; }
-		uint16_t get_channels() const override { return m_channels; }
-		uint16_t get_bits_per_sample() const override { return m_bits_per_sample; }
+		[[nodiscard]] uint32_t get_sample_rate() const override { return m_sample_rate; }
+		[[nodiscard]] uint16_t get_channels() const override { return m_channels; }
+		[[nodiscard]] uint16_t get_bits_per_sample() const override { return m_bits_per_sample; }
 	private:
-		virtual void write(const short* pcm_frames, size_t frame_count) override;
+		void write(const short* pcm_frames, size_t frame_count) override;
 		void write_header_placeholder();
 		void update_header();
 	private:

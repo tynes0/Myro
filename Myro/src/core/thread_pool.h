@@ -1,4 +1,5 @@
 #pragma once
+
 #include <vector>
 #include <queue>
 #include <thread>
@@ -8,13 +9,13 @@
 #include <functional>
 #include <type_traits>
 
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class thread_pool 
 {
-private:
     struct thread_stop{};
 public:
     explicit thread_pool(uint32_t thread_count = 1)
-        : m_stop(false), m_count(std::clamp<uint32_t>(thread_count, 1, std::thread::hardware_concurrency()))
+        : m_count(std::clamp<uint32_t>(thread_count, 1, std::thread::hardware_concurrency())), m_stop(false)
     {
          for (uint32_t i = 0; i < m_count; ++i)
             m_workers.emplace_back([this]() { worker_loop(); });
@@ -55,6 +56,7 @@ public:
             for (uint32_t i = 0; i < threads_to_stop; ++i)
             {
                 enqueue([this]() {
+                    // NOLINTNEXTLINE(hicpp-exception-baseclass)
                     throw thread_stop{};
                     });
             }
@@ -79,7 +81,15 @@ public:
     {
         using return_type = std::invoke_result_t<Func, Args...>;
 
-        auto task = std::make_shared<std::packaged_task<return_type()>>(std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
+        auto task = std::make_shared<std::packaged_task<return_type()>>(
+            [
+                f = std::forward<Func>(func),
+                ...args_fwd = std::forward<Args>(args)
+            ]() mutable -> return_type
+            {
+                return std::invoke(std::move(f), std::move(args_fwd)...);
+            }
+        );
 
         std::future<return_type> res = task->get_future();
         {
@@ -101,8 +111,10 @@ public:
         std::vector<std::future<return_type>> futures;
         futures.reserve(inputs.size());
 
+        auto&& forwarded_func = std::forward<Func>(func);
+
         for (const auto& item : inputs) 
-            futures.push_back(enqueue(func, item));
+            futures.push_back(enqueue(forwarded_func, item));
 
         std::vector<return_type> results;
         results.reserve(inputs.size());

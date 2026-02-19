@@ -1,8 +1,5 @@
 #include "speex_loader.h"
 
-#include <fstream>
-#include <vector>
-#include <stdexcept>
 
 #include "ogg_loader.h"
 
@@ -17,20 +14,18 @@
 
 namespace myro
 {
-    void speex_loader::init(bool debug_log)
+    void speex_loader::init()
     {
-        MYRO_UNUSED(debug_log);
     }
 
-    void speex_loader::shutdown(bool debug_log)
+    void speex_loader::shutdown()
     {
-        MYRO_UNUSED(debug_log);
     }
 
-    raw_buffer speex_loader::load(const std::filesystem::path& filepath, bool debug_log)
+    raw_buffer speex_loader::load(const std::filesystem::path& filepath)
     {
         if (ogg_loader::is_ogg_container(filepath))
-            return load_ogg_speex(filepath, debug_log);
+            return load_ogg_speex(filepath);
 
 
         MYRO_UNIMPLAMENTED();
@@ -39,10 +34,9 @@ namespace myro
         return final;
     }
 
-    raw_buffer speex_loader::load_ogg_speex(const std::filesystem::path& filepath, bool debug_log)
+    raw_buffer speex_loader::load_ogg_speex(const std::filesystem::path& filepath)
     {
         MYRO_UNUSED(filepath);
-        MYRO_UNUSED(debug_log);
         MYRO_UNIMPLAMENTED();
 
         raw_buffer final;

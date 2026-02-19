@@ -40,10 +40,10 @@ namespace myro
         FLAC__stream_encoder_set_bits_per_sample(m_data->flac_encoder, 16);
         FLAC__stream_encoder_set_sample_rate(m_data->flac_encoder, sample_rate);
 
-        m_data->channels = channels;
+        m_data->channels = static_cast<uint16_t>(channels);
         m_data->sample_rate = sample_rate;
 
-        auto status = FLAC__stream_encoder_init_file(m_data->flac_encoder, output_filepath.string().c_str(), NULL, NULL);
+        auto status = FLAC__stream_encoder_init_file(m_data->flac_encoder, output_filepath.string().c_str(), nullptr, nullptr);
 
         if (status != FLAC__STREAM_ENCODER_INIT_STATUS_OK)
         {
@@ -56,7 +56,7 @@ namespace myro
         return true;
     }
 
-    void flac_encoder::uninit()
+    void flac_encoder::deinit()
     {
         if (!m_data->is_initialized)
             return;

@@ -1,17 +1,21 @@
+#include <cmath>
+#include <algorithm>
+
 namespace myro
 {
     inline vec3& vec3::operator=(float scalar) noexcept { x = y = z = scalar; return *this; }
     inline vec3& vec3::operator=(const vec3& other) noexcept { x = other.x; y = other.y; z = other.z; return *this; }
+    inline vec3& vec3::operator=(vec3&& other) noexcept { x = other.x; y = other.y; z = other.z; return *this; }
 
-    inline constexpr vec3 vec3::operator+(const vec3& right) const noexcept { return { x + right.x, y + right.y, z + right.z }; }
-    inline constexpr vec3 vec3::operator-(const vec3& right) const noexcept { return { x - right.x, y - right.y, z - right.z }; }
-    inline constexpr vec3 vec3::operator*(const vec3& right) const noexcept { return { x * right.x, y * right.y, z * right.z }; }
-    inline constexpr vec3 vec3::operator/(const vec3& right) const { return { x / right.x, y / right.y, z / right.z }; }
+    constexpr vec3 vec3::operator+(const vec3& right) const noexcept { return { x + right.x, y + right.y, z + right.z }; }
+    constexpr vec3 vec3::operator-(const vec3& right) const noexcept { return { x - right.x, y - right.y, z - right.z }; }
+    constexpr vec3 vec3::operator*(const vec3& right) const noexcept { return { x * right.x, y * right.y, z * right.z }; }
+    constexpr vec3 vec3::operator/(const vec3& right) const { return { x / right.x, y / right.y, z / right.z }; }
 
-    inline constexpr vec3 vec3::operator+(float scalar) const noexcept { return { x + scalar, y + scalar, z + scalar }; }
-    inline constexpr vec3 vec3::operator-(float scalar) const noexcept { return { x - scalar, y - scalar, z - scalar }; }
-    inline constexpr vec3 vec3::operator*(float scalar) const noexcept { return { x * scalar, y * scalar, z * scalar }; }
-    inline constexpr vec3 vec3::operator/(float scalar) const { return { x / scalar, y / scalar, z / scalar }; }
+    constexpr vec3 vec3::operator+(float scalar) const noexcept { return { x + scalar, y + scalar, z + scalar }; }
+    constexpr vec3 vec3::operator-(float scalar) const noexcept { return { x - scalar, y - scalar, z - scalar }; }
+    constexpr vec3 vec3::operator*(float scalar) const noexcept { return { x * scalar, y * scalar, z * scalar }; }
+    constexpr vec3 vec3::operator/(float scalar) const { return { x / scalar, y / scalar, z / scalar }; }
 
     inline vec3& vec3::operator+=(const vec3& right) noexcept { x += right.x; y += right.y; z += right.z; return *this; }
     inline vec3& vec3::operator-=(const vec3& right) noexcept { x -= right.x; y -= right.y; z -= right.z; return *this; }
@@ -28,33 +32,35 @@ namespace myro
     inline vec3 vec3::operator--(int) { vec3 r = *this; --x; --y; --z; return r; }
     inline vec3& vec3::operator--() { --x; --y; --z; return *this; }
 
-    inline constexpr float& vec3::operator[](size_t i) { MYRO_ASSERT(i < 3, "vec3 operator[] out_of_bounds_error!"); return v[i]; }
-    inline constexpr const float& vec3::operator[](size_t i) const { MYRO_ASSERT(i < 3, "vec3 operator[] out_of_bounds_error!"); return v[i]; }
+    constexpr float& vec3::operator[](size_t i) { MYRO_ASSERT(i < 3, "vec3 operator[] out_of_bounds_error!"); return v[i]; }
+    constexpr const float& vec3::operator[](size_t i) const { MYRO_ASSERT(i < 3, "vec3 operator[] out_of_bounds_error!"); return v[i]; }
 
-    inline constexpr vec3 vec3::operator-() const noexcept { return vec3(- x, -y, -z); }
-    inline constexpr bool vec3::operator==(const vec3& o) const noexcept { return x == o.x && y == o.y && z == o.z; }
-    inline constexpr bool vec3::operator!=(const vec3& o) const noexcept { return !(*this == o); }
+    constexpr vec3 vec3::operator-() const noexcept { return vec3{- x, -y, -z}; }
 
-    inline constexpr float vec3::magnitude_squared() const noexcept
+    // NOLINTNEXTLINE(clang-diagnostic-float-equal)
+    constexpr bool vec3::operator==(const vec3& o) const noexcept { return x == o.x && y == o.y && z == o.z; }
+    constexpr bool vec3::operator!=(const vec3& o) const noexcept { return !(*this == o); }
+
+    constexpr float vec3::magnitude_squared() const noexcept
     {
         return x * x + y * y + z * z;
     }
 
-    inline constexpr float vec3::dot(const vec3& other) const noexcept
+    constexpr float vec3::dot(const vec3& other) const noexcept
     { 
         return x * other.x + y * other.y + z * other.z;
     }
 
-    inline constexpr vec3 vec3::cross(const vec3& other) const noexcept
+    constexpr vec3 vec3::cross(const vec3& other) const noexcept
     {
-        return vec3(
+        return vec3{
             y * other.z - z * other.y,
             z * other.x - x * other.z,
             x * other.y - y * other.x
-        );
+        };
     }
 
-    inline constexpr float vec3::distance_squared(const vec3& other) const noexcept
+    constexpr float vec3::distance_squared(const vec3& other) const noexcept
     { 
         return (*this - other).magnitude_squared();
     }
@@ -73,7 +79,7 @@ namespace myro
     {
         float dp = dot(other);
         float mp = magnitude() * other.magnitude();
-        if (mp == 0) return 0.0;
+        if (mp < default_epsilon) return 0.0;
         float cos_theta = dp / mp;
         return std::acos(std::clamp(cos_theta, -1.0f, 1.0f));
     }
@@ -95,60 +101,60 @@ namespace myro
         return std::abs(magnitude_squared() - 1.0f) < epsilon;
     }
 
-    inline constexpr vec3 vec3::lerp(const vec3& target, float t) const noexcept
+    constexpr vec3 vec3::lerp(const vec3& target, float t) const noexcept
     {
         return *this * (1.0f - t) + target * t;
     }
 
-    inline constexpr vec3 vec3::clamp(const vec3& min, const vec3& max) const
+    constexpr vec3 vec3::clamp(const vec3& min, const vec3& max) const
     {
-        return vec3(
+        return vec3{
             std::clamp(x, min.x, max.x),
             std::clamp(y, min.y, max.y),
             std::clamp(z, min.z, max.z)
-        );
+        };
     }
 
-    inline constexpr vec3 vec3::clamp(float min, float max) const
+    constexpr vec3 vec3::clamp(float min, float max) const
     {
-        return vec3(
+        return vec3{
             std::clamp(x, min, max),
             std::clamp(y, min, max),
             std::clamp(z, min, max)
-        );
+        };
     }
 
     inline vec3 vec3::abs() const noexcept
     { 
-        return vec3(std::fabs(x), std::fabs(y), std::fabs(z)); 
+        return vec3{ std::fabs(x), std::fabs(y), std::fabs(z) }; 
     }
 
     inline vec3 vec3::floor() const noexcept
     {
-        return vec3(std::floor(x), std::floor(y), std::floor(z)); 
+        return vec3{ std::floor(x), std::floor(y), std::floor(z) }; 
     }
 
     inline vec3 vec3::ceil() const noexcept
     { 
-        return vec3(std::ceil(x), std::ceil(y), std::ceil(z)); 
+        return vec3{ std::ceil(x), std::ceil(y), std::ceil(z) }; 
     }
 
     inline vec3 vec3::round() const noexcept
     {
-        return vec3(std::round(x), std::round(y), std::round(z)); 
+        return vec3{ std::round(x), std::round(y), std::round(z) }; 
     }
 
-    inline constexpr vec3 vec3::project(const vec3& onto) const
+    constexpr vec3 vec3::project(const vec3& onto) const
     {
         float omag = onto.magnitude_squared();
-        if (omag < std::numeric_limits<float>::epsilon()) return vec3::zero;
+        if (omag < default_epsilon) return vec3::zero;
         return onto * (dot(onto) / omag);
     }
 
-    inline constexpr vec3 vec3::reflect(const vec3& normal) const
+    constexpr vec3 vec3::reflect(const vec3& normal) const
     {
         float nmag = normal.magnitude_squared();
-        if (nmag < std::numeric_limits<float>::epsilon()) return *this;
+        if (nmag < default_epsilon) return *this;
         return *this - normal * (2.0f * dot(normal) / nmag);
     }
 
@@ -169,33 +175,33 @@ namespace myro
         float sin_theta = std::sin(angle);
         float one_minus_cos = 1.0f - cos_theta;
         
-        return vec3(
+        return vec3{
             vx * (kx * kx * one_minus_cos + cos_theta) + vy * (kx * ky * one_minus_cos - kz * sin_theta) + vz * (kx * kz * one_minus_cos + ky * sin_theta),
             vx * (ky * kx * one_minus_cos + kz * sin_theta) + vy * (ky * ky * one_minus_cos + cos_theta) + vz * (ky * kz * one_minus_cos - kx * sin_theta),
             vx * (kz * kx * one_minus_cos - ky * sin_theta) + vy * (kz * ky * one_minus_cos + kx * sin_theta) + vz * (kz * kz * one_minus_cos + cos_theta)
-        );
+        };
     }
 
-    inline constexpr vec3 vec3::smoothstep(const vec3& target, float t) const noexcept
+    constexpr vec3 vec3::smoothstep(const vec3& target, float t) const noexcept
     {
         float clamped_t = std::clamp(t, 0.0f, 1.0f);
         float smooth_t = clamped_t * clamped_t * (3.0f - 2.0f * clamped_t);
         return lerp(target, smooth_t);
     }
 
-    inline constexpr vec3 vec3::smootherstep(const vec3& target, float t) const noexcept
+    constexpr vec3 vec3::smootherstep(const vec3& target, float t) const noexcept
     {
         float clamped_t = std::clamp(t, 0.0f, 1.0f);
-        float smooth_t = clamped_t * clamped_t * clamped_t * (t * (t * 6.0f - 15.0f) + 10.0f);
+        float smooth_t = clamped_t * clamped_t * clamped_t * (clamped_t * (clamped_t * 6.0f - 15.0f) + 10.0f);
         return lerp(target, smooth_t);
     }
 
-    inline constexpr float vec3::min_component() const noexcept
+    constexpr float vec3::min_component() const noexcept
     {
         return std::min({ x, y, z });
     }
 
-    inline constexpr size_t vec3::min_dimension() const noexcept
+    constexpr size_t vec3::min_dimension() const noexcept
     {
         if (y < x)
         {
@@ -206,12 +212,12 @@ namespace myro
         return 0;
     }
 
-    inline constexpr float vec3::max_component() const noexcept
+    constexpr float vec3::max_component() const noexcept
     {
         return std::max({ x, y, z });
     }
 
-    inline constexpr size_t vec3::max_dimension() const noexcept
+    constexpr size_t vec3::max_dimension() const noexcept
     {
         if (y > x)
         {
@@ -222,11 +228,11 @@ namespace myro
         return 0;
     }
 
-    inline constexpr int vec3::sign_dot(const vec3& other) const noexcept
+    constexpr int vec3::sign_dot(const vec3& other) const noexcept
     {
         float dot_product = dot(other);
-        if (dot_product > std::numeric_limits<float>::epsilon()) return 1;
-        if (dot_product < -std::numeric_limits<float>::epsilon()) return -1;
+        if (dot_product > default_epsilon) return 1;
+        if (dot_product < -default_epsilon) return -1;
         return 0;
     }
 
@@ -235,13 +241,12 @@ namespace myro
         return (std::fabs(x - other.x) < epsilon) && (std::fabs(y - other.y) < epsilon) && (std::fabs(z - other.z) < epsilon);
     }
 
-    inline constexpr bool vec3::is_one_of_zero() const noexcept
+    constexpr bool vec3::is_one_of_zero() const noexcept
     { 
         return (x == 0.0 || y == 0.0 || z == 0.0);
     }
-
-
-    inline constexpr bool vec3::is_zero() const noexcept
+    
+    constexpr bool vec3::is_zero() const noexcept
     {
         return (x == 0.0 && y == 0.0 && z == 0.0);
     }

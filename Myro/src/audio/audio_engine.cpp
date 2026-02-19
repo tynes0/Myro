@@ -38,9 +38,9 @@ namespace myro
 	struct engine_data
 	{
 		bool active = false;
-		bool debug_log = false;
 		thread_pool tpool{ 1 };
 		std::vector<std::weak_ptr<audio_source>> loaded_sources;
+		std::mutex sources_mutex;
 	};
 
 	namespace
@@ -50,39 +50,39 @@ namespace myro
 		void init_this_thread_loaders(uint32_t flag)
 		{
 			if(flag & static_cast<uint32_t>(audio_file_format::ogg))
-				ogg_loader::init(s_data.debug_log);
+				ogg_loader::init();
 			if(flag & static_cast<uint32_t>(audio_file_format::mp3))
-				mp3_loader::init(s_data.debug_log);
+				mp3_loader::init();
 			if(flag & static_cast<uint32_t>(audio_file_format::wav))
-				wav_loader::init(s_data.debug_log);
+				wav_loader::init();
 			if(flag & static_cast<uint32_t>(audio_file_format::flac))
-				flac_loader::init(s_data.debug_log);
+				flac_loader::init();
 			if(flag & static_cast<uint32_t>(audio_file_format::opus))
-				opus_loader::init(s_data.debug_log);
+				opus_loader::init();
 			if(flag & static_cast<uint32_t>(audio_file_format::spx))
-				speex_loader::init(s_data.debug_log);
+				speex_loader::init();
 		}
 
 		void shutdown_this_thread_loaders(uint32_t flag)
 		{
 			if (flag & static_cast<uint32_t>(audio_file_format::ogg))
-				ogg_loader::shutdown(s_data.debug_log);
+				ogg_loader::shutdown();
 			if (flag & static_cast<uint32_t>(audio_file_format::mp3))
-				mp3_loader::shutdown(s_data.debug_log);
+				mp3_loader::shutdown();
 			if (flag & static_cast<uint32_t>(audio_file_format::wav))
-				wav_loader::shutdown(s_data.debug_log);
+				wav_loader::shutdown();
 			if (flag & static_cast<uint32_t>(audio_file_format::flac))
-				flac_loader::shutdown(s_data.debug_log);
+				flac_loader::shutdown();
 			if (flag & static_cast<uint32_t>(audio_file_format::opus))
-				opus_loader::shutdown(s_data.debug_log);
+				opus_loader::shutdown();
 			if (flag & static_cast<uint32_t>(audio_file_format::spx))
-				speex_loader::shutdown(s_data.debug_log);
+				speex_loader::shutdown();
 		}
 	}
 
 	void audio_engine::init()
 	{
-		openal_backend::init(s_data.debug_log);
+		openal_backend::init();
 		listener::init();
 
 		init_this_thread_loaders(
@@ -110,8 +110,7 @@ namespace myro
 			if (auto sptr = wptr.lock())
 				sptr->unload();
 
-		if (s_data.debug_log)
-			log::warn("Unloaded {0} sources in shutdown.", s_data.loaded_sources.size());
+		log::warn("Unloaded {0} sources in shutdown.", s_data.loaded_sources.size());
 
 		s_data.loaded_sources.clear();
 
@@ -146,8 +145,7 @@ namespace myro
 
 		if (format == audio_file_format::unknown)
 		{
-			if (s_data.debug_log)
-				log::error("Unknown file format: {}", filepath.extension());
+			log::error("Unknown file format: {}", filepath.extension());
 			return nullptr;
 		}
 
@@ -157,23 +155,21 @@ namespace myro
 
 		switch (format)
 		{
-		case audio_file_format::ogg: buf = ogg_loader::load(filepath, s_data.debug_log); break;
-		case audio_file_format::mp3: buf = mp3_loader::load(filepath, s_data.debug_log); break;
-		case audio_file_format::wav: buf = wav_loader::load(filepath, s_data.debug_log); break;
-		case audio_file_format::opus:buf = opus_loader::load(filepath, s_data.debug_log); break;
-		case audio_file_format::spx: buf = speex_loader::load(filepath, s_data.debug_log); break;
-		case audio_file_format::flac:buf = flac_loader::load(filepath, s_data.debug_log); break;
+		case audio_file_format::ogg: buf = ogg_loader::load(filepath); break;
+		case audio_file_format::mp3: buf = mp3_loader::load(filepath); break;
+		case audio_file_format::wav: buf = wav_loader::load(filepath); break;
+		case audio_file_format::opus:buf = opus_loader::load(filepath); break;
+		case audio_file_format::spx: buf = speex_loader::load(filepath); break;
+		case audio_file_format::flac:buf = flac_loader::load(filepath); break;
 		case audio_file_format::unknown: break;
 		}
 
 		timer.stop();
-		if (s_data.debug_log)
-			log::debug("{0} file loading took: {1}ms", filepath.extension(), timer.get_time());
+		log::debug("{0} file loading took: {1}ms", filepath.extension(), timer.get_time());
 
 		if (!buf.data)
 		{
-			if (s_data.debug_log)
-				log::error("Error while loading {} audio source!", filepath.extension());
+			log::error("Error while loading {} audio source!", filepath.extension());
 			return nullptr;
 		}
 
@@ -181,8 +177,7 @@ namespace myro
 		auto result = load_audio_source_al(buf);
 		timer.stop();
 
-		if (s_data.debug_log)
-			log::debug("Audio source loading took: {}ms", timer.get_time());
+		log::debug("Audio source loading took: {}ms", timer.get_time());
 
 		s_data.loaded_sources.emplace_back(result);
 
@@ -219,8 +214,7 @@ namespace myro
 	{
 		if (!source)
 		{
-			if (s_data.debug_log)
-				log::error("Unloaded audio source passed to audio engine!");
+			log::error("Unloaded audio source passed to audio engine!");
 			return;
 		}
 
@@ -243,8 +237,7 @@ namespace myro
 	{
 		if (!source || !source->m_loaded)
 		{
-			if (s_data.debug_log)
-				log::error("Unloaded audio source passed to audio engine!");
+			log::error("Unloaded audio source passed to audio engine!");
 			return;
 		}
 
@@ -255,8 +248,7 @@ namespace myro
 	{
 		if (!source || !source->m_loaded)
 		{
-			if (s_data.debug_log)
-				log::error("Unloaded audio source passed to audio engine!");
+			log::error("Unloaded audio source passed to audio engine!");
 			return;
 		}
 
@@ -267,8 +259,7 @@ namespace myro
 	{
 		if (!source || !source->m_loaded)
 		{
-			if (s_data.debug_log)
-				log::error("Unloaded audio source passed to audio engine!");
+			log::error("Unloaded audio source passed to audio engine!");
 			return;
 		}
 
@@ -279,8 +270,7 @@ namespace myro
 	{
 		if (!source || !source->m_loaded)
 		{
-			if (s_data.debug_log)
-				log::error("Unloaded audio source passed to audio engine!");
+			log::error("Unloaded audio source passed to audio engine!");
 			return;
 		}
 
@@ -291,8 +281,7 @@ namespace myro
 	{
 		if (!source || !source->m_loaded)
 		{
-			if (s_data.debug_log)
-				log::error("Unloaded audio source passed to audio engine!");
+			log::error("Unloaded audio source passed to audio engine!");
 			return;
 		}
 
@@ -310,8 +299,7 @@ namespace myro
 		alDopplerFactor(factor);
 
 		if (alGetError() != AL_NO_ERROR)
-			if (s_data.debug_log)
-				log::warn("Failed to set Doppler factor!");
+			log::warn("Failed to set Doppler factor!");
 	}
 
 	void audio_engine::set_speed_of_sound(float speed)
@@ -319,16 +307,14 @@ namespace myro
 		alSpeedOfSound(speed);
 
 		if (alGetError() != AL_NO_ERROR)
-			if (s_data.debug_log)
-				log::warn("Failed to set speed of sound!");
+			log::warn("Failed to set speed of sound!");
 	}
 
 	audio_state audio_engine::state_of(const std::shared_ptr<audio_source>& source)
 	{
 		if (!source || !source->m_loaded)
 		{
-			if (s_data.debug_log)
-				log::error("Unloaded audio source passed to audio engine!");
+			log::error("Unloaded audio source passed to audio engine!");
 			return audio_state::unknown;
 		}
 
@@ -343,33 +329,22 @@ namespace myro
 		}
 	}
 
-	void audio_engine::set_debug_logging(bool log)
-	{
-		s_data.debug_log = log;
-	}
-
-	bool audio_engine::is_debug_logging()
-	{
-		return s_data.debug_log;
-	}
-
 	std::shared_ptr<audio_source> audio_engine::load_audio_source_al(raw_buffer buf)
 	{
 		audio_data data = buf.load<audio_data>();
 
 		if (!data.buffer)
 		{
-			if (s_data.debug_log)
-				log::error("Failed to setup audio source!");
+			log::error("Failed to setup audio source!");
 			return nullptr;
 		}
 
 		ALuint buffer;
 		alGenBuffers(1, &buffer);
-		alBufferData(buffer, static_cast<ALenum>(data.al_format), data.buffer.as<ALvoid>(), static_cast<ALsizei>(data.buffer.size), static_cast<ALsizei>(data.sample_rate));
+		alBufferData(buffer, data.al_format, data.buffer.as<ALvoid>(), static_cast<ALsizei>(data.buffer.size), static_cast<ALsizei>(data.sample_rate));
 
 		std::shared_ptr<audio_source> result_source = std::make_shared<audio_source>();
-		result_source->m_buffer_handle = static_cast<uint32_t>(buffer);
+		result_source->m_buffer_handle = buffer;
 		result_source->m_loaded = true;
 		result_source->m_total_duration = data.track_length;
 
@@ -380,8 +355,7 @@ namespace myro
 		buf.release();
 
 		if (alGetError() != AL_NO_ERROR)
-			if (s_data.debug_log)
-				log::error("Failed to setup audio source!");
+			log::error("Failed to setup audio source!");
 
 		return result_source;
 	}

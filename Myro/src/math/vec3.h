@@ -1,12 +1,7 @@
 #pragma once
 
 #include "../core/log.h"
-
-#include <cstddef>
-#include <cmath>
-#include <algorithm>
 #include <limits>
-
 
 namespace myro
 {
@@ -15,12 +10,12 @@ namespace myro
     public:
         union
         {
-            struct { float x, y, z; };
-            struct { float r, g, b; };
+            MYRO_ANONYMOUS_STRUCT { float x, y, z; };
+            MYRO_ANONYMOUS_STRUCT { float r, g, b; };
             float v[3];
         };
 
-        friend class vec2;
+        static constexpr float default_epsilon = std::numeric_limits<float>::epsilon();
 
         static const vec3 zero;
         static const vec3 one;
@@ -32,12 +27,13 @@ namespace myro
         constexpr vec3(float x, float y, float z) noexcept : x(x), y(y), z(z) {}
         explicit constexpr vec3(float scalar) noexcept : x(scalar), y(scalar), z(scalar) {}
         constexpr vec3(const vec3& other) noexcept : x(other.x), y(other.y), z(other.z) {}
-
-        vec3(const vec2& other, float z = 0.0) noexcept;
-        vec3& operator=(const vec2& other) noexcept;
+        constexpr vec3(vec3&& other) noexcept : x(other.x), y(other.y), z(other.z) {}
 
         vec3& operator=(float scalar) noexcept;
         vec3& operator=(const vec3& other) noexcept;
+        vec3& operator=(vec3&& other) noexcept;
+
+        ~vec3() = default;
 
         constexpr vec3 operator+(const vec3& right) const noexcept;
         constexpr vec3 operator-(const vec3& right) const noexcept;
@@ -82,7 +78,7 @@ namespace myro
 
         vec3& normalize();
         vec3 normalized() const;
-        bool is_unit(float epsilon = 1e-9) const noexcept;
+        bool is_unit(float epsilon = default_epsilon) const noexcept;
 
         constexpr vec3 lerp(const vec3& target, float t) const noexcept;
         constexpr vec3 clamp(const vec3& min, const vec3& max) const;
@@ -108,7 +104,7 @@ namespace myro
 
         int constexpr sign_dot(const vec3& other) const noexcept;
 
-        bool equals(const vec3& other, float epsilon = 1e-9) const noexcept;
+        bool equals(const vec3& other, float epsilon = default_epsilon) const noexcept;
         constexpr bool is_one_of_zero() const noexcept;
         constexpr bool is_zero() const noexcept;
         bool is_nan() const noexcept;

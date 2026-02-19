@@ -15,7 +15,7 @@ namespace myro
 		wav		= constants::bit<3>,
 		flac	= constants::bit<4>,
 		opus	= constants::bit<5>,
-		spx		= constants::bit<7>
+		spx		= constants::bit<6>
 	};
 
 	audio_file_format get_file_format(const std::filesystem::path& filepath);

@@ -30,15 +30,15 @@
 	#error "Unknown platform!"
 #endif
 
-#define MYRO_UNUSED(x) ((void)x)
+#define MYRO_UNUSED(x) ((void)(x))
 
-#define _MYRO_STRINGIZE_(x) #x
-#define MYRO_STRINGIZE(x) _MYRO_STRINGIZE_(x)
+#define MYRO_STRINGIZE_(x) #x
+#define MYRO_STRINGIZE(x) MYRO_STRINGIZE_(x)
 
 #define MYRO_EXPAND(x) x
 
-#define _MYRO_CONCATENATE_(a, b) a ## b
-#define MYRO_CONCATENATE(a, b)  _MYRO_CONCATENATE_(a, b)
+#define MYRO_CONCATENATE_(a, b) a ## b
+#define MYRO_CONCATENATE(a, b)  MYRO_CONCATENATE_(a, b)
 
 // Debug Break
 #if defined(MYRO_PLATFORM_WINDOWS)
@@ -52,6 +52,12 @@
 
 #ifdef MYRO_DEBUG
 #define MYRO_ENABLE_ASSERTS  // Myro asserts enabled
+#endif
+
+#if defined(__GNUC__) || defined(__clang__)
+	#define MYRO_ANONYMOUS_STRUCT __extension__ struct
+#else
+	#define MYRO_ANONYMOUS_STRUCT struct
 #endif
 
 namespace myro

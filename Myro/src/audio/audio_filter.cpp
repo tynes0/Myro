@@ -13,8 +13,6 @@
 
 #include <unordered_map>
 
-#include "detail/openal_backend.h"
-
 namespace myro
 {
 	struct filter_data
@@ -28,7 +26,7 @@ namespace myro
 		std::unordered_map<ALuint, filter_data> filter_datas;
 	};
 
-	static filter_manager_data s_data;
+	namespace { filter_manager_data s_data; }
 
 	void audio_filter_manager::apply_low_pass_filter(const std::shared_ptr<audio_source>& source, float gain, float gainHF)
 	{
@@ -43,12 +41,19 @@ namespace myro
 		alFilteri(filter, AL_FILTER_TYPE, AL_FILTER_LOWPASS);
 		alFilterf(filter, AL_LOWPASS_GAIN, gain);
 		alFilterf(filter, AL_LOWPASS_GAINHF, gainHF);
-		alSourcei(source->m_source_handle, AL_DIRECT_FILTER, filter);
+		alSourcei(source->m_source_handle, AL_DIRECT_FILTER, static_cast<ALint>(filter));
 
 		if (alGetError() != AL_NO_ERROR)
+		{
 			log::warn("Error attaching low-pass filter to source!");
+		}
 		else
-			s_data.filter_datas[source->m_source_handle] = { filter, audio_filter::low_pass_filter };
+		{
+			s_data.filter_datas[source->m_source_handle] = {
+				.filter = filter,
+				.type = audio_filter::low_pass_filter
+			};
+		}
 	}
 
 	void audio_filter_manager::apply_high_pass_filter(const std::shared_ptr<audio_source>& source, float gain, float gainLF)
@@ -64,12 +69,19 @@ namespace myro
 		alFilteri(filter, AL_FILTER_TYPE, AL_FILTER_HIGHPASS);
 		alFilterf(filter, AL_HIGHPASS_GAIN, gain);
 		alFilterf(filter, AL_HIGHPASS_GAINLF, gainLF);
-		alSourcei(source->m_source_handle, AL_DIRECT_FILTER, filter);
+		alSourcei(source->m_source_handle, AL_DIRECT_FILTER, static_cast<ALint>(filter));
 
 		if (alGetError() != AL_NO_ERROR)
+		{
 			log::warn("Error attaching high-pass filter to source!");
+		}
 		else
-			s_data.filter_datas[source->m_source_handle] = { filter, audio_filter::high_pass_filter };
+		{
+			s_data.filter_datas[source->m_source_handle] = {
+				.filter = filter,
+				.type = audio_filter::high_pass_filter
+			};
+		}
 	}
 
 	void audio_filter_manager::remove_filter(const std::shared_ptr<audio_source>& source, audio_filter type)

@@ -20,14 +20,12 @@ namespace myro
         ALCdevice* audio_device;
     };
 
-    static openal_backend_data s_data;
+    namespace { openal_backend_data s_data; }
 
-    bool openal_backend::init(bool debug_log)
+    bool openal_backend::init()
     {
-        ALCcontext* context;
-
-        s_data.audio_device = NULL;
-        s_data.audio_device = alcOpenDevice(NULL);
+        s_data.audio_device = nullptr;
+        s_data.audio_device = alcOpenDevice(nullptr);
 
         if (!s_data.audio_device)
         {
@@ -35,10 +33,10 @@ namespace myro
             return false;
         }
 
-        context = alcCreateContext(s_data.audio_device, NULL);
-        if (context == NULL || alcMakeContextCurrent(context) == ALC_FALSE)
+        ALCcontext* context = alcCreateContext(s_data.audio_device, nullptr);
+        if (context == nullptr || alcMakeContextCurrent(context) == ALC_FALSE)
         {
-            if (context != NULL)
+            if (context != nullptr)
                 alcDestroyContext(context);
             alcCloseDevice(s_data.audio_device);
 
@@ -51,16 +49,13 @@ namespace myro
 
     void openal_backend::shutdown()
     {
-        ALCdevice* device;
-        ALCcontext* context;
-
-        context = alcGetCurrentContext();
-        if (context == NULL)
+        ALCcontext* context = alcGetCurrentContext();
+        if (context == nullptr)
             return;
 
-        device = alcGetContextsDevice(context);
+        ALCdevice* device = alcGetContextsDevice(context);
 
-        alcMakeContextCurrent(NULL);
+        alcMakeContextCurrent(nullptr);
         alcDestroyContext(context);
         alcCloseDevice(device);
     }
@@ -74,6 +69,8 @@ namespace myro
         {
         case 1: return bits_per_sample == 8 ? AL_FORMAT_MONO8 : AL_FORMAT_MONO16;
         case 2: return bits_per_sample == 8 ? AL_FORMAT_STEREO8 : AL_FORMAT_STEREO16;
+        default:
+            break;
         }
 
         MYRO_ASSERT(false, "Unsupported channels!");

@@ -9,10 +9,10 @@ namespace myro
     class flac_loader
     {
     public:
-        static void init(bool debug_log = false);
-        static void shutdown(bool debug_log = false);
+        static void init();
+        static void shutdown();
 
-        static raw_buffer load(const std::filesystem::path& filepath, bool debug_log = false);
-        static raw_buffer load_ogg_flac(const std::filesystem::path& filepath, bool debug_log = false);
+        static raw_buffer load(const std::filesystem::path& filepath);
+        static raw_buffer load_ogg_flac(const std::filesystem::path& filepath);
     };
 }

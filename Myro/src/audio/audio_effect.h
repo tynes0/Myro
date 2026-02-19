@@ -6,7 +6,7 @@
 
 namespace myro
 {
-	enum class audio_effect
+	enum class audio_effect : uint8_t
 	{
 		unknown = 0,
 		reverb,

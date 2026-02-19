@@ -2,9 +2,15 @@
 
 #include "../../core/log.h"
 
-namespace myro
+#include <cstdio>
+#include <cerrno>
+#include <system_error>
+
+#include "dtlog.h"
+
+namespace myro::detail
 {
-	void myro::detail::display_file_info(const std::string& filename, int64_t channels, int64_t sample_rate, uint64_t size)
+	void display_file_info(const std::string& filename, int64_t channels, int64_t sample_rate, uint64_t size)
 	{
 		log::info("~~~~ FILE INFO ~~~~");
 		log::info("File: {}", filename);
@@ -13,7 +19,7 @@ namespace myro
 		log::info("Expected Size: {}", size);
 	}
 
-    FILE* detail::open_file(const std::filesystem::path& path, const char* mode) 
+    FILE* open_file(const std::filesystem::path& path, const char* mode) 
     {
         if (!mode)
             return nullptr;
@@ -38,7 +44,7 @@ namespace myro
             }
         }
 
-        int base_count = int(has_r) + int(has_w) + int(has_a);
+        int base_count = static_cast<int>(has_r) + static_cast<int>(has_w) + static_cast<int>(has_a);
         if (base_count != 1) 
         {
             errno = EINVAL;
@@ -64,4 +70,38 @@ namespace myro
 #endif // defined(_WIN32)
     }
 
+    void fclose_checked(FILE* stream)
+    {
+        if (stream != nullptr && std::fclose(stream) != 0)
+        {
+            std::error_code ec(errno, std::system_category());
+            log::error("Failed to close file. Reason: {}", ec.message());
+        }
+    }
+    
+    void fseek_checked(FILE* stream, long offset, int origin)
+    {
+        if (std::fseek(stream, offset, origin) != 0)
+        {
+            std::error_code ec(errno, std::system_category());
+            
+            const char* origin_str = (origin == SEEK_SET) ? "SEEK_SET" :
+                                     (origin == SEEK_CUR) ? "SEEK_CUR" :
+                                     (origin == SEEK_END) ? "SEEK_END" : "UNKNOWN";
+    
+            log::error("Failed to seek file (offset: {}, origin: {}). Reason: {}", 
+                             offset, origin_str, ec.message());
+        }
+    }
+    
+    void fwrite_checked(void const* buf, size_t elem_size, size_t elem_count, FILE* stream)
+    {
+        size_t written = std::fwrite(buf, elem_size, elem_count, stream);
+        
+        if (written < elem_count)
+        {
+            std::error_code ec(errno, std::system_category());
+            log::error("Failed to write to file. Expected {} elements, wrote {}. Reason: {}",  elem_count, written, ec.message());
+        }
+    }
 }

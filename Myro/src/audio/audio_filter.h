@@ -6,7 +6,7 @@
 
 namespace myro
 {
-	enum class audio_filter
+	enum class audio_filter : uint8_t
 	{
 		unknown = 0,
 		low_pass_filter,

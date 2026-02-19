@@ -14,48 +14,43 @@ namespace myro
 		mp3dec_t mp3_decoder{};
 	};
 
-	thread_local mp3_loader_data s_data;
+	namespace { thread_local mp3_loader_data s_data; }
 
-	void mp3_loader::init(bool debug_log)
+	void mp3_loader::init()
 	{
-		MYRO_UNUSED(debug_log);
 		mp3dec_init(&s_data.mp3_decoder);
 	}
 
-	void mp3_loader::shutdown(bool debug_log)
+	void mp3_loader::shutdown()
 	{
-		MYRO_UNUSED(debug_log);
-		// We don't need to shutdown mp3dec
+		// We don't need to shut down mp3dec
 	}
 
-	raw_buffer mp3_loader::load(const std::filesystem::path& filepath, bool debug_log)
+	raw_buffer mp3_loader::load(const std::filesystem::path& filepath)
 	{
 		mp3dec_file_info_t info;
 		std::string fname = filepath.string();
-		int load_result = mp3dec_load(&s_data.mp3_decoder, fname.c_str(), &info, NULL, NULL);
+		int load_result = mp3dec_load(&s_data.mp3_decoder, fname.c_str(), &info, nullptr, nullptr);
 
 		if (load_result != 0)
 		{
 			log::error("Failed to load mp3 file! ({})", filepath);
-			return raw_buffer();
+			return raw_buffer{};
 		}
 
 		uint32_t size = static_cast<uint32_t>(info.samples * sizeof(mp3d_sample_t));
 		int sample_rate = info.hz;
 		int channels = info.channels;
-		float length_seconds = size / (info.avg_bitrate_kbps * 1024.0f);
-
-		if (debug_log)
-			detail::display_file_info(fname, channels, sample_rate, size);
+		float length_seconds = static_cast<float>(size) / (static_cast<float>(info.avg_bitrate_kbps) * 1024.0f);
 
 		ALenum al_format = openal_backend::get_openAL_format(channels);
 
 		audio_data data
 		{
-			al_format,
-			raw_buffer(info.buffer, size),
-			sample_rate,
-			length_seconds
+			.al_format = al_format,
+			.buffer = raw_buffer(info.buffer, size),
+			.sample_rate = sample_rate,
+			.track_length = length_seconds
 		};
 
 		raw_buffer buf;

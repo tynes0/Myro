@@ -4,7 +4,6 @@
 
 #endif // _MSC_VER
 
-
 #include <AL/al.h>
 #include <AL/alext.h>
 
@@ -15,7 +14,6 @@ namespace myro
 	audio_source::audio_source(uint32_t handle, bool loaded, float length)
 		: m_buffer_handle(handle), m_loaded(loaded), m_total_duration(length)
 	{
-
 	}
 
 	audio_source::~audio_source()
@@ -128,7 +126,10 @@ namespace myro
 
 	timestamp audio_source::get_timestamp() const
 	{
-		return timestamp((uint32_t)(m_total_duration / 60.0f), (((uint32_t)m_total_duration) % 60));
+		return timestamp{
+			.minutes = static_cast<uint32_t>(m_total_duration / 60.0f),
+			.seconds = (static_cast<uint32_t>(m_total_duration) % 60)
+		};
 	}
 
 	std::shared_ptr<audio_source> audio_source::load_from_file(const std::filesystem::path& filepath, bool spitial)

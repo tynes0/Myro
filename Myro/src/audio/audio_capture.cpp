@@ -30,12 +30,12 @@ namespace myro
 		{
 			if (!input)
 				return;
-			
+			MYRO_UNUSED(output);
 			audio_capture_public_write* self = static_cast<audio_capture_public_write*>(device->pUserData);
-			static_cast<audio_capture_public_write*>(device->pUserData)->write(static_cast<const short*>(input), frame_count);
+			self->write(static_cast<const short*>(input), frame_count);
 		}
 
-		std::shared_ptr<Iencoder> get_encoder(audio_file_format format)
+		std::shared_ptr<IEncoder> get_encoder(audio_file_format format)
 		{
 			switch (format)
 			{
@@ -64,7 +64,7 @@ namespace myro
 		delete m_data;
 	}
 
-	bool audio_capture::init(const std::shared_ptr<Iencoder>& encoder)
+	bool audio_capture::init(const std::shared_ptr<IEncoder>& encoder)
 	{
 		if (m_encoder)
 			deinit(false);
@@ -136,7 +136,7 @@ namespace myro
 		}
 		if (m_encoder)
 		{
-			m_encoder->uninit();
+			m_encoder->deinit();
 			m_encoder = nullptr;
 		}
 	}

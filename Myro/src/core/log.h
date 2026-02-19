@@ -52,6 +52,9 @@ namespace myro
 			std::string formatted_msg = formatter::format(message, std::forward<Args>(args)...);
 			_critical(formatted_msg);
 		}
+
+		static void set_logger_activity(bool is_active);
+		static bool is_logger_active();
 	private:
 		static void _trace(const std::string& message);
 		static void _info(const std::string& message);
@@ -60,6 +63,7 @@ namespace myro
 		static void _error(const std::string& message);
 		static void _critical(const std::string& message);
 	};
+}
 
 #ifdef MYRO_ENABLE_ASSERTS
 	#define _MYRO_INTERNAL_ASSERT_IMPL(check, msg, ...) do { if(!(check)) {myro::log::critical(msg, __VA_ARGS__); MYRO_DEBUGBREAK(); } } while(false)
@@ -73,5 +77,4 @@ namespace myro
 	#define MYRO_ASSERT(x, ...)				// Myro assert not enabled
 #endif //MYRO_ENABLE_ASSERTS
 
-#define MYRO_UNIMPLAMENTED() MYRO_ASSERT(false, "ERROR: Unimplamented method called!");
-}
+#define MYRO_UNIMPLAMENTED() MYRO_ASSERT(false, "ERROR: Unimplamented method called!")

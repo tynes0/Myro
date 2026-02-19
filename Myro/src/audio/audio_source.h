@@ -4,7 +4,6 @@
 #include "../core/timestamp.h"
 
 #include <cstdint>
-#include <string>
 #include <memory>
 
 namespace myro 
@@ -16,6 +15,7 @@ namespace myro
 		audio_source(const audio_source&) = default;
 		audio_source(audio_source&&) = default;
 		audio_source& operator=(const audio_source&) = default;
+		audio_source& operator=(audio_source&&) = default;
 		~audio_source();
 
 		void unload();

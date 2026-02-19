@@ -8,33 +8,30 @@
 
 namespace myro
 {
-	void wav_loader::init(bool debug_log)
+	void wav_loader::init()
 	{
-		MYRO_UNUSED(debug_log);
 		// miniaudio does not need a basic initialization 
 		// as it requires a separate initialization for each file.
 	}
 
-	void wav_loader::shutdown(bool debug_log)
+	void wav_loader::shutdown()
 	{
-		MYRO_UNUSED(debug_log);
 		// For the same reasons as the init method,
 		// there is no need to shutdown either.
 	}
 
-	raw_buffer wav_loader::load(const std::filesystem::path& filepath, bool debug_log)
+	raw_buffer wav_loader::load(const std::filesystem::path& filepath)
 	{
 		std::string fname = filepath.string();
 
-		ma_result result;
 		ma_decoder_config config = ma_decoder_config_init_default();
 		ma_decoder decoder;
 
-		result = ma_decoder_init_file(fname.c_str(), &config, &decoder);
+		ma_result result = ma_decoder_init_file(fname.c_str(), &config, &decoder);
 		if (result != MA_SUCCESS)
 		{
 			log::error("Failed to load WAV file: {}", fname);
-			return raw_buffer();
+			return raw_buffer{};
 		}
 
 		ma_uint64 total_frames = 0;
@@ -43,13 +40,10 @@ namespace myro
 		{
 			log::error("Failed to get the length of the WAV file.");
 			ma_decoder_uninit(&decoder);
-			return raw_buffer();
+			return raw_buffer{};
 		}
 
 		size_t buffer_size = decoder.outputChannels * total_frames * sizeof(ma_int16);
-
-		if (debug_log)
-			detail::display_file_info(fname, decoder.outputChannels, decoder.outputSampleRate, buffer_size);
 
 		raw_buffer buffer(buffer_size);
 		size_t frames_read = 0;
@@ -59,7 +53,7 @@ namespace myro
 			log::error("Failed to read WAV frames.");
 			ma_decoder_uninit(&decoder);
 			buffer.release();
-			return raw_buffer();
+			return raw_buffer{};
 		}
 
 		if (frames_read != total_frames)
