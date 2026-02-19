@@ -1,0 +1,13 @@
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.wav binary
+*.ogg binary
+*.flac binary
+*.mp3 binary
+*.opus binary
+*.spx binary
+
+vendor/** linguist-vendored
+docs/api/** linguist-generated
