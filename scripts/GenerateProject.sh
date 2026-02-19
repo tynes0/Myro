@@ -5,7 +5,7 @@ echo "      Myro - Project Generator            "
 echo "=========================================="
 echo ""
 
-cd ..
+cd "$(dirname "$0")/.."
 
 if [ ! -d "build" ]; then
     echo "[INFO] Creating build directory..."

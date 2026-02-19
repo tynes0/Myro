@@ -4,7 +4,7 @@ echo ==========================================
 echo          Myro - Auto Builder
 echo ==========================================
 echo.
-cd ..
+cd /d "%~dp0.."
 
 if not exist "build" (
     echo [INFO] Build directory not found! Generating first...

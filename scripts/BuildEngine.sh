@@ -5,7 +5,7 @@ echo "          Myro - Auto Builder             "
 echo "=========================================="
 echo ""
 
-cd ..
+cd "$(dirname "$0")/.."
 
 if [ ! -d "build" ]; then
     echo "[INFO] Build directory not found! Generating first..."

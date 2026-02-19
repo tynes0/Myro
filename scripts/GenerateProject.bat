@@ -5,7 +5,7 @@ echo       Myro - Visual Studio Generator
 echo ==========================================
 echo.
 
-cd ..
+cd /d "%~dp0.."
 
 if not exist "build" (
     echo [INFO] Creating build directory...
