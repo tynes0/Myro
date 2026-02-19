@@ -5,7 +5,6 @@ if(POLICY CMP0135)
     cmake_policy(SET CMP0135 NEW)
 endif()
 
-# --- VS KLASÖRLEMEYİ AÇ ---
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakePredefined")
 
@@ -20,7 +19,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include(FetchContent)
 
-# --- Vendor ve Alt Projeler ---
 add_subdirectory(vendor)
 
 # Alias Tanımları
@@ -37,14 +35,12 @@ if(TARGET vorbisenc AND NOT TARGET Vorbis::vorbisenc)
     add_library(Vorbis::vorbisenc ALIAS vorbisenc)
 endif()
 
-# --- Ana Projeler ---
 add_subdirectory(Myro)
-add_subdirectory(Myro-Examples)
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "Myro-Examples")
 
-# ========================================================
-# AKILLI TEMİZLİK ROBOTU (Alt Klasörleme Desteği İle)
-# ========================================================
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    add_subdirectory(Myro-Examples)
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "Myro-Examples")
+endif()
 
 function(fix_all_folders_recursive current_dir)
     get_property(targets DIRECTORY "${current_dir}" PROPERTY BUILDSYSTEM_TARGETS)
@@ -53,12 +49,10 @@ function(fix_all_folders_recursive current_dir)
         if(NOT "${t}" STREQUAL "Myro" AND NOT "${t}" STREQUAL "Myro-Examples")
             get_target_property(current_folder ${t} FOLDER)
             
-            # Eğer hedef ALL_BUILD gibi CMake özel hedefi değilse ayır:
             if(NOT "${current_folder}" STREQUAL "CMakePredefined")
                 
-                # İsimleri küçük harfe çevirip tarıyoruz
                 string(TOLOWER "${t}" lower_t)
-                set(subfolder "Vendor/Misc") # Ne olduğu bilinmeyenler buraya düşer
+                set(subfolder "Vendor/Misc")
                 
                 # Hedefin ismine göre uygun Vendor alt klasörünü seç
                 if(lower_t MATCHES "^(openal.*|common|ex-common|objects|bsincgen|make_hrm)$")
@@ -77,11 +71,9 @@ function(fix_all_folders_recursive current_dir)
                     set(subfolder "Vendor/SmallLibs")
                 endif()
                 
-                # Klasörü ata
                 set_target_properties(${t} PROPERTIES FOLDER "${subfolder}")
             endif()
         else()
-            # Ana projeleri kendi isimleriyle klasörle
             set_target_properties(${t} PROPERTIES FOLDER "${t}")
         endif()
     endforeach()
@@ -93,5 +85,4 @@ function(fix_all_folders_recursive current_dir)
     endforeach()
 endfunction()
 
-# Robotu Çalıştır
 fix_all_folders_recursive("${CMAKE_BINARY_DIR}")
