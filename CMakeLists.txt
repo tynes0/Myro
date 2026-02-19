@@ -40,6 +40,7 @@ endif()
 # --- Ana Projeler ---
 add_subdirectory(Myro)
 add_subdirectory(Myro-Examples)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "Myro-Examples")
 
 # ========================================================
 # AKILLI TEMİZLİK ROBOTU (Alt Klasörleme Desteği İle)

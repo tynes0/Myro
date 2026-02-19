@@ -5,7 +5,6 @@ FetchContent_Declare(
     URL https://github.com/xiph/speex/archive/refs/tags/Speex-1.2.1.zip
 )
 FetchContent_MakeAvailable(speex)
-
 FetchContent_GetProperties(speex)
 
 # --- DUMMY CONFIG.H ---
@@ -15,6 +14,10 @@ if(NOT EXISTS ${DUMMY_CONFIG})
         "/* CMake dummy config.h */\n"
         "#define HAVE_STRING_H 1\n"
         "#define HAVE_MEMORY_H 1\n"
+        "#ifdef _MSC_VER\n"
+        "#define inline __inline\n"
+        "#endif\n"
+        "#define EXPORT\n"
     )
 endif()
 
@@ -23,12 +26,12 @@ file(GLOB SPEEX_SOURCES
     "${speex_SOURCE_DIR}/libspeex/*.h"
 )
 
-list(FILTER SPEEX_SOURCES EXCLUDE REGEX "test.*\\.c")
-list(FILTER SPEEX_SOURCES EXCLUDE REGEX "client.*\\.c")
-list(FILTER SPEEX_SOURCES EXCLUDE REGEX "mdf\\.c")
+list(FILTER SPEEX_SOURCES EXCLUDE REGEX "/test[^/]*\\.c$")
+list(FILTER SPEEX_SOURCES EXCLUDE REGEX "/client[^/]*\\.c$")
+list(FILTER SPEEX_SOURCES EXCLUDE REGEX "/mdf\\.c$")
 
 if(NOT SPEEX_SOURCES)
-    message(FATAL_ERROR "Speex source files not found! Please check your internet connection and clear build folder.")
+    message(FATAL_ERROR "Speex kaynak dosyalari bulunamadi!")
 endif()
 
 add_library(speex STATIC ${SPEEX_SOURCES})
@@ -42,7 +45,6 @@ target_include_directories(speex PUBLIC
 
 target_compile_definitions(speex PRIVATE
     FLOATING_POINT
-    EXPORT=
     _CRT_SECURE_NO_WARNINGS
     HAVE_CONFIG_H
     USE_SMALLFT
