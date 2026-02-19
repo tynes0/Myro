@@ -1,0 +1,32 @@
+# ==============================================================================
+# Myro - Doxygen Config File
+# ==============================================================================
+
+PROJECT_NAME           = "Myro"
+PROJECT_BRIEF          = "A Modern, High-Performance, and Cross-Platform C++20 Audio Engine"
+PROJECT_LOGO           = 
+
+OUTPUT_DIRECTORY       = docs/api
+
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+INPUT                  = Myro/src Myro/include
+RECURSIVE              = YES
+
+FILE_PATTERNS          = *.h *.hpp *.cpp *.c *.inl
+
+EXCLUDE_PATTERNS       = */vendor/* */build/* */Myro-Examples/*
+
+EXTRACT_ALL            = YES
+
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_PATH_NAMES        = NO
+
+OPTIMIZE_OUTPUT_FOR_C  = NO
+BUILTIN_STL_SUPPORT    = YES
+EXTRACT_LOCAL_CLASSES  = NO
