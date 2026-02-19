@@ -1,12 +1,12 @@
 ﻿include(FetchContent)
 
-# Speex Reposunu Çek
 FetchContent_Declare(
     speex
-    GIT_REPOSITORY https://github.com/xiph/speex.git
-    GIT_TAG        master
+    URL https://github.com/xiph/speex/archive/refs/tags/Speex-1.2.1.zip
 )
 FetchContent_MakeAvailable(speex)
+
+FetchContent_GetProperties(speex)
 
 # --- DUMMY CONFIG.H ---
 set(DUMMY_CONFIG "${CMAKE_CURRENT_BINARY_DIR}/config.h")
@@ -18,31 +18,34 @@ if(NOT EXISTS ${DUMMY_CONFIG})
     )
 endif()
 
-# Kaynak kodları topla
 file(GLOB SPEEX_SOURCES 
     "${speex_SOURCE_DIR}/libspeex/*.c"
     "${speex_SOURCE_DIR}/libspeex/*.h"
 )
 
-# Gereksiz dosyaları filtrele
 list(FILTER SPEEX_SOURCES EXCLUDE REGEX "test.*\\.c")
 list(FILTER SPEEX_SOURCES EXCLUDE REGEX "client.*\\.c")
 list(FILTER SPEEX_SOURCES EXCLUDE REGEX "mdf\\.c")
 
+if(NOT SPEEX_SOURCES)
+    message(FATAL_ERROR "Speex source files not found! Please check your internet connection and clear build folder.")
+endif()
+
 add_library(speex STATIC ${SPEEX_SOURCES})
+
+set_target_properties(speex PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(speex PUBLIC 
     "${speex_SOURCE_DIR}/include"
     "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
-# --- DEFINITIONS GÜNCELLEMESİ ---
 target_compile_definitions(speex PRIVATE
     FLOATING_POINT
     EXPORT=
     _CRT_SECURE_NO_WARNINGS
     HAVE_CONFIG_H
-    USE_SMALLFT  # <-- SORUNU ÇÖZEN SATIR: Speex'in kendi FFT'sini kullan
+    USE_SMALLFT
 )
 
 if(TARGET Ogg::ogg)

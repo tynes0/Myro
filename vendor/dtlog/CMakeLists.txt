@@ -1,6 +1,5 @@
 ﻿set(LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
-# Header ve Source indir
 file(DOWNLOAD 
     "https://raw.githubusercontent.com/tynes0/dtlog/refs/heads/main/dtlog.h"
     "${LIB_DIR}/dtlog.h"

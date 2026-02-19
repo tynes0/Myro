@@ -15,9 +15,6 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(flac)
 
-# --- FLAC SUSTURUCU ---
-# FLAC hedeflerine "NDEBUG" (No Debug) tanımını ekliyoruz.
-# Bu, debug modunda bile olsa FLAC'ın sessiz kalmasını sağlar.
 if(TARGET FLAC)
     target_compile_definitions(FLAC PRIVATE NDEBUG)
 endif()
