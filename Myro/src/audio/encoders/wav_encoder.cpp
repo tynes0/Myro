@@ -1,5 +1,6 @@
 #include "wav_encoder.h"
 
+#include <cstring>
 #include "../detail/detail.h"
 
 namespace myro
@@ -40,7 +41,7 @@ namespace myro
 
     void wav_encoder::write_header_placeholder()
 	{
-        memcpy(m_header, "RIFF\0\0\0\0WAVEfmt \x10\0\0\0\x01\0\0\0\0\0\0\0\0\0\0\0\x02\0\x10\0data\0\0\0\0", 44);
+        std::memcpy(m_header, "RIFF\0\0\0\0WAVEfmt \x10\0\0\0\x01\0\0\0\0\0\0\0\0\0\0\0\x02\0\x10\0data\0\0\0\0", 44);
         *reinterpret_cast<uint16_t*>(m_header + 22) = m_channels;
         *reinterpret_cast<uint32_t*>(m_header + 24) = m_sample_rate;
         *reinterpret_cast<uint32_t*>(m_header + 28) = m_sample_rate * m_channels * (m_bits_per_sample / 8);
