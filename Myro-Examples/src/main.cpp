@@ -3,7 +3,6 @@
 #include <chrono>
 #include <coco.h>
 
-
 int main()
 {
 	myro::audio_engine::init();
@@ -13,16 +12,16 @@ int main()
 	std::vector<std::filesystem::path> files{ "assets/mp3_test.mp3", "assets/wav_test.wav", "assets/ogg_vorbis_test.ogg", "assets/opus_test.opus", "assets/flac_test.flac", "assets/ogg_flac_test.ogg" };
 
 	coco::timer<coco::time_units::milliseconds> timer;
-	std::vector<std::shared_ptr<myro::audio_source>> tests = myro::audio_engine::multi_load_audio_source(files);
+	auto test = myro::audio_engine::load_audio_source("assets/spx_test.spx");
 	timer.stop();
 
 	myro::log::error("Total loading took: {0}ms", timer.get_time());
 
-	myro::audio_engine::play(tests[1]);
+	myro::audio_engine::play(test);
 
-	while (myro::audio_engine::state_of(tests[1]) == myro::audio_state::playing)
+	while (myro::audio_engine::state_of(test) == myro::audio_state::playing)
 	{
-		float current_dur = tests[1]->get_current_duration();
+		float current_dur = test->get_current_duration();
 		myro::log::info("Sound playing: {}", current_dur);
 	}
 
