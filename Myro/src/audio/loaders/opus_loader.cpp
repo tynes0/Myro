@@ -1,10 +1,10 @@
-#include "opus_loader.h"
+#include "audio/loaders/opus_loader.h"
+
+#include "internal/audio_data.h"
+#include "internal/detail.h"
+#include "internal/openal_backend.h"
 
 #include <opusfile.h>
-
-#include "../detail/audio_data.h"
-#include "../detail/detail.h"
-#include "../detail/openal_backend.h"
 
 namespace myro
 {

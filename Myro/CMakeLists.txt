@@ -1,12 +1,17 @@
-# Kaynak dosyaları otomatik tara
-file(GLOB_RECURSE SOURCES "src/**.cpp" "src/**.c")
-file(GLOB_RECURSE HEADERS "src/**.h" "src/**.hpp" "src/**.inl")
+file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.c")
+file(GLOB_RECURSE HEADERS 
+    "src/*.h" "src/*.hpp" "src/*.inl"
+    "include/*.h" "include/*.hpp" "include/*.inl"
+)
 
 add_library(Myro STATIC ${SOURCES} ${HEADERS})
 
-target_include_directories(Myro PUBLIC 
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-    $<INSTALL_INTERFACE:include>
+target_include_directories(Myro
+    PUBLIC 
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
 )
 
 target_compile_definitions(Myro PUBLIC

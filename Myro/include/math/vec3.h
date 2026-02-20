@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../core/log.h"
+#include "core/log.h"
 #include <limits>
 
 namespace myro

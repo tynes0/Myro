@@ -1,16 +1,15 @@
-#include "audio_capture.h"
+#include "audio/audio_capture.h"
 
-#include "../core/log.h"
+#include "core/log.h"
 
-#include "encoders/wav_encoder.h"
-#include "encoders/flac_encoder.h"
-#include "encoders/opus_encoder.h"
-#include "encoders/speex_encoder.h"
-#include "encoders/vorbis_encoder.h"
-#include "encoders/mp3_encoder.h"
+#include "audio/encoders/wav_encoder.h"
+#include "audio/encoders/flac_encoder.h"
+#include "audio/encoders/opus_encoder.h"
+#include "audio/encoders/speex_encoder.h"
+#include "audio/encoders/vorbis_encoder.h"
+#include "audio/encoders/mp3_encoder.h"
 
 #include <miniaudio.h>
-
 
 namespace myro
 {

@@ -1,6 +1,6 @@
 #include "openal_backend.h"
 
-#include "../../core/log.h"
+#include "core/log.h"
 
 #ifdef _MSC_VER
 #pragma warning(push)

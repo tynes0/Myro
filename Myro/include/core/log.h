@@ -3,7 +3,7 @@
 #include <string>
 #include <filesystem>
 
-#include "../util/formatter.h"
+#include "utility/formatter.h"
 #include "base.h"
 
 namespace myro
@@ -75,6 +75,8 @@ namespace myro
 	};
 }
 
+// NOLINTBEGIN(clang-diagnostic-reserved-macro-identifier, bugprone-reserved-identifier)
+
 #ifdef MYRO_ENABLE_ASSERTS
 	#define _MYRO_INTERNAL_ASSERT_IMPL(check, msg, ...) do { if(!(check)) {myro::log::critical(msg, __VA_ARGS__); MYRO_DEBUGBREAK(); } } while(false)
 	#define _MYRO_INTERNAL_ASSERT_WITH_MSG(check, ...)	_MYRO_INTERNAL_ASSERT_IMPL(check, "Myro Assertion failed! File: {0}, Line: {1}, Message: {2}", std::filesystem::path(__FILE__).filename().string(), __LINE__ , __VA_ARGS__)
@@ -88,3 +90,5 @@ namespace myro
 #endif //MYRO_ENABLE_ASSERTS
 
 #define MYRO_UNIMPLAMENTED() MYRO_ASSERT(false, "ERROR: Unimplamented method called!")
+
+// NOLINTEND(clang-diagnostic-reserved-macro-identifier, bugprone-reserved-identifier)

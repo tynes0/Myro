@@ -1,10 +1,8 @@
-// Only for implamentation, do not include that file
-
 #pragma once
 
 #include <cstdint>
 #include <AL/al.h>
-#include "../../core/buffer.h"
+#include "core/buffer.h"
 
 namespace myro
 {

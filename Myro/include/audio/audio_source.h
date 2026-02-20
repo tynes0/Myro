@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../math/vec3.h"
-#include "../core/timestamp.h"
+#include "math/vec3.h"
+#include "core/timestamp.h"
 
 #include <cstdint>
 #include <memory>

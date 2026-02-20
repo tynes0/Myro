@@ -1,9 +1,10 @@
-﻿#include "speex_encoder.h"
-#include "../../core/log.h"
+﻿#include "audio/encoders/speex_encoder.h"
+#include "core/log.h"
 
 #include <vector>
 #include <cstring>
 #include <random>
+#include <fstream>
 
 #include <speex/speex.h>
 #include <speex/speex_header.h>

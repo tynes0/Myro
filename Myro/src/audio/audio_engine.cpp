@@ -1,21 +1,21 @@
-#include "audio_engine.h"
+#include "audio/audio_engine.h"
 
-#include "detail/audio_data.h"
-#include "detail/openal_backend.h"
+#include "audio/listener.h"
+#include "audio/audio_file_format.h"
 
-#include "listener.h"
-#include "audio_file_format.h"
+#include "core/buffer.h"
+#include "core/log.h"
+#include "core/thread_pool.h"
 
-#include "loaders/ogg_loader.h"
-#include "loaders/mp3_loader.h"
-#include "loaders/wav_loader.h"
-#include "loaders/opus_loader.h"
-#include "loaders/speex_loader.h"
-#include "loaders/flac_loader.h"
+#include "internal/audio_data.h"
+#include "internal/openal_backend.h"
 
-#include "../core/buffer.h"
-#include "../core/log.h"
-#include "../core/thread_pool.h"
+#include "audio/loaders/ogg_loader.h"
+#include "audio/loaders/mp3_loader.h"
+#include "audio/loaders/wav_loader.h"
+#include "audio/loaders/opus_loader.h"
+#include "audio/loaders/speex_loader.h"
+#include "audio/loaders/flac_loader.h"
 
 #ifdef _MSC_VER
 #pragma warning(push)

@@ -1,19 +1,18 @@
-#include "ogg_loader.h"
+#include "audio/loaders/ogg_loader.h"
+#include "audio/loaders/opus_loader.h"
+#include "audio/loaders/speex_loader.h"
+#include "audio/loaders/flac_loader.h"
+
+#include "internal/audio_data.h"
+#include "internal/detail.h"
+#include "internal/openal_backend.h"
+
+#include <vorbis/codec.h>
+#include <vorbis/vorbisfile.h>
 
 #include <fstream>
 #include <string_view>
 #include <cmath>
-
-#include "../detail/audio_data.h"
-#include "../detail/detail.h"
-#include "../detail/openal_backend.h"
-
-#include "opus_loader.h"
-#include "speex_loader.h"
-#include "flac_loader.h"
-
-#include <vorbis/codec.h>
-#include <vorbis/vorbisfile.h>
 
 namespace myro
 {

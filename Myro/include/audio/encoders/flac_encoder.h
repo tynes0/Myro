@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iencoder.h"
+#include <memory>
 
 namespace myro
 {

@@ -1,16 +1,15 @@
-#include "flac_loader.h"
+#include "audio/loaders/flac_loader.h"
+
+#include "audio/loaders/ogg_loader.h"
+#include "internal/audio_data.h"
+#include "internal/detail.h"
+#include "internal/openal_backend.h"
+
+#include <FLAC/stream_decoder.h>
 
 #include <vector>
 #include <memory>
 #include <cstdio>
-
-#include "../detail/audio_data.h"
-#include "../detail/detail.h"
-#include "../detail/openal_backend.h"
-
-#include "ogg_loader.h"
-
-#include <FLAC/stream_decoder.h>
 
 namespace myro
 {

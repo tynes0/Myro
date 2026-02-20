@@ -1,8 +1,8 @@
-#include "wav_loader.h"
+#include "audio/loaders/wav_loader.h"
 
-#include "../detail/openal_backend.h"
-#include "../detail/audio_data.h"
-#include "../detail/detail.h"
+#include "internal/openal_backend.h"
+#include "internal/audio_data.h"
+#include "internal/detail.h"
 
 #include <miniaudio.h>
 

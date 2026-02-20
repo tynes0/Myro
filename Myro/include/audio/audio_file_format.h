@@ -3,7 +3,7 @@
 #include <string>
 #include <filesystem>
 
-#include "../core/base.h"
+#include "core/base.h"
 
 namespace myro
 {

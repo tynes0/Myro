@@ -1,11 +1,11 @@
-#include "mp3_loader.h"
+#include "audio/loaders/mp3_loader.h"
+
+#include "internal/openal_backend.h"
+#include "internal/audio_data.h"
+#include "internal/detail.h"
 
 #include <minimp3.h>
 #include <minimp3_ex.h>
-
-#include "../detail/openal_backend.h"
-#include "../detail/audio_data.h"
-#include "../detail/detail.h"
 
 namespace myro
 {

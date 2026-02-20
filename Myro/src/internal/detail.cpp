@@ -1,12 +1,10 @@
 #include "detail.h"
 
-#include "../../core/log.h"
+#include "core/log.h"
 
 #include <cstdio>
 #include <cerrno>
 #include <system_error>
-
-#include "dtlog.h"
 
 namespace myro::detail
 {

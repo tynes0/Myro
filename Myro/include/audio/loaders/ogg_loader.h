@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-#include "../../core/buffer.h"
+#include "core/buffer.h"
 
 namespace myro
 {

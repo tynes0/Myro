@@ -1,7 +1,7 @@
-#include "wav_encoder.h"
+#include "audio/encoders/wav_encoder.h"
 
+#include "internal/detail.h"
 #include <cstring>
-#include "../detail/detail.h"
 
 namespace myro
 {

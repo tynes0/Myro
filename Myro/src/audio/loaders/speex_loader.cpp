@@ -1,8 +1,8 @@
-#include "speex_loader.h"
-#include "ogg_loader.h"
+#include "audio/loaders/speex_loader.h"
+#include "audio/loaders/ogg_loader.h"
 
-#include "../detail/audio_data.h"
-#include "../detail/openal_backend.h"
+#include "internal/audio_data.h"
+#include "internal/openal_backend.h"
 
 #include <speex/speex.h>
 #include <speex/speex_header.h>
@@ -16,7 +16,6 @@ namespace myro
 {
     void speex_loader::init()
     {
-        // Speex başlatma gerektirmez.
     }
 
     void speex_loader::shutdown()
@@ -37,7 +36,7 @@ namespace myro
         std::ifstream file(filepath, std::ios::binary);
         if (!file.is_open())
         {
-            log::error("Speex dosyasi acilamadi: {}", filepath.string());
+            log::error("Speex file could not open: {}", filepath.string());
             return raw_buffer{};
         }
 
@@ -90,11 +89,10 @@ namespace myro
 
                     if (packet_count == 1)
                     {
-                        // 1. Paket: Speex Header
                         SpeexHeader* header = speex_packet_to_header(reinterpret_cast<char*>(op.packet), op.bytes);
                         if (!header)
                         {
-                            log::error("Speex basligi okunamadi veya gecersiz: {}", filepath.string());
+                            log::error("Speex header could not read or invalid: {}", filepath.string());
                             goto cleanup;
                         }
 

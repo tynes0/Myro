@@ -11,6 +11,7 @@ namespace myro
 	struct deep_copy{};
 
 	// Non-owning raw buffer class
+	// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 	struct raw_buffer
 	{
 		uint8_t* data = nullptr;
@@ -158,6 +159,7 @@ namespace myro
 		size_t operator-(const raw_buffer& buffer) const { return data - buffer.data; }
 	};
 
+	// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 	struct scoped_buffer
 	{
 		scoped_buffer(raw_buffer buffer) : m_buffer(std::move(buffer)) {}
@@ -247,12 +249,14 @@ namespace myro
 			return (std::memcmp(data, temp, size) == 0);
 		}
 
-		constexpr bool const is_null() const { return false; }
+		// NOLINTNEXTLINE
+		constexpr bool is_null() const { return false; }
 
 		template <class T>
 		static constexpr bool fit = sizeof(T) <= size;
 	};
 
+	// NOLINTBEGIN
 	template<>
 	struct stack_buffer<0, 0>
 	{
@@ -276,6 +280,7 @@ namespace myro
 		template <class>
 		static constexpr bool fit = false;
 	};
+	// NOLINTEND
 
 #ifdef _MSC_VER
 #pragma warning(pop)

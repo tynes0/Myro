@@ -1,13 +1,8 @@
-#include "audio_source.h"
-
-#ifdef _MSC_VER
-
-#endif // _MSC_VER
+#include "audio/audio_source.h"
+#include "audio/audio_engine.h"
 
 #include <AL/al.h>
 #include <AL/alext.h>
-
-#include "audio_engine.h"
 
 namespace myro
 {

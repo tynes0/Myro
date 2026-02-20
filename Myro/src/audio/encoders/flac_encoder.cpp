@@ -1,5 +1,5 @@
-#include "flac_encoder.h"
-#include "../../core/log.h"
+#include "audio/encoders/flac_encoder.h"
+#include "core/log.h"
 
 #include <FLAC/stream_encoder.h>
 #include <vector>

@@ -1,21 +1,20 @@
 ﻿#pragma once
 
 #include "iencoder.h"
-#include <fstream>
 #include <memory>
 
 namespace myro
 {
-    struct _opus_encoder_data;
+    struct _speex_encoder_data;
     
     // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
-    class opus_encoder : public IEncoder
+    class speex_encoder : public IEncoder
     {
     public:
-        static std::shared_ptr<opus_encoder> create() { return std::make_shared<opus_encoder>(); }
+        static std::shared_ptr<speex_encoder> create() { return std::make_shared<speex_encoder>(); }
         
-        opus_encoder();
-        ~opus_encoder() override;
+        speex_encoder();
+        ~speex_encoder() override;
 
         bool init(const std::filesystem::path& output_filepath, unsigned int sample_rate, unsigned int channels) override;
         void deinit() override;
@@ -33,6 +32,6 @@ namespace myro
         void flush_ogg_pages(bool force_flush);
         void deinit_impl();
 
-        _opus_encoder_data* m_data = nullptr;
+        _speex_encoder_data* m_data = nullptr;
     };
 }

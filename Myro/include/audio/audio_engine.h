@@ -6,7 +6,7 @@
 
 #include "audio_source.h"
 #include "audio_state.h"
-#include "../core/buffer.h"
+#include "core/buffer.h"
 
 namespace myro
 {

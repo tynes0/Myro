@@ -1,7 +1,8 @@
-﻿#include "mp3_encoder.h"
-#include "../../core/log.h"
+﻿#include "audio/encoders/mp3_encoder.h"
+#include "core/log.h"
 
 #include <vector>
+#include <fstream>
 #include <lame.h>
 
 namespace myro
