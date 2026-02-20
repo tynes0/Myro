@@ -1,7 +1,8 @@
 # Myro 🎵
-[![Myro CI](https://github.com/tynes0/Myro/actions/workflows/build.yml/badge.svg)](https://github.com/tynes0/Myro/actions/workflows/build.yml)
-> A Modern, High-Performance, and Cross-Platform C++20 Audio Engine
-**Myro** is an advanced audio engine and processing library built for modern C++ applications. Powered by an `OpenAL Soft` backend, it provides a seamless and high-level API for 3D spatial audio, audio effects, and multi-format decoding/encoding.
+[![Windows CI](https://github.com/tynes0/Myro/actions/workflows/build-windows.yml/badge.svg)](https://github.com/tynes0/Myro/actions/workflows/build-windows.yml)
+[![Linux CI](https://github.com/tynes0/Myro/actions/workflows/build-linux.yml/badge.svg)](https://github.com/tynes0/Myro/actions/workflows/build-linux.yml)
+[![macOS CI](https://github.com/tynes0/Myro/actions/workflows/build-macos.yml/badge.svg)](https://github.com/tynes0/Myro/actions/workflows/build-macos.yml)
+> A Modern, High-Performance, and Cross-Platform C++20 Audio Engine**Myro** is an advanced audio engine and processing library built for modern C++ applications. Powered by an `OpenAL Soft` backend, it provides a seamless and high-level API for 3D spatial audio, audio effects, and multi-format decoding/encoding.
 
 It features a completely automated build system via CMake `FetchContent`, meaning **zero manual dependency management**. Just clone and build.
 
