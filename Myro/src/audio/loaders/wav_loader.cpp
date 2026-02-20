@@ -63,10 +63,10 @@ namespace myro
 
 		audio_data data
 		{
-			al_format,
-			buffer,
-			static_cast<int>(decoder.outputSampleRate),
-			(static_cast<float>(total_frames) / static_cast<float>(decoder.outputSampleRate))
+			.al_format = al_format,
+			.buffer = buffer,
+			.sample_rate = static_cast<int>(decoder.outputSampleRate),
+			.track_length = (static_cast<float>(total_frames) / static_cast<float>(decoder.outputSampleRate))
 		};
 
 		raw_buffer buf;
