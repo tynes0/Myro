@@ -24,7 +24,7 @@ It features a completely automated build system via CMake `FetchContent`, meanin
 | **OGG / Vorbis**| ✅ | ✅ | *libogg, libvorbis* |
 | **FLAC** | ✅ | ✅ | *libFLAC* |
 | **Opus** | ✅ | ✅ | *libopus, opusfile* |
-| **Speex** | ✅ | ❌ | *libspeex* |
+| **Speex** | ✅ | ✅ | *libspeex* |
 
 ---
 

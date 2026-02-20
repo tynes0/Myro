@@ -1,0 +1,38 @@
+﻿#pragma once
+
+#include "iencoder.h"
+#include <fstream>
+#include <memory>
+
+namespace myro
+{
+    struct _speex_encoder_data;
+    
+    // NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
+    class speex_encoder : public IEncoder
+    {
+    public:
+        static std::shared_ptr<speex_encoder> create() { return std::make_shared<speex_encoder>(); }
+        
+        speex_encoder();
+        ~speex_encoder() override;
+
+        bool init(const std::filesystem::path& output_filepath, unsigned int sample_rate, unsigned int channels) override;
+        void deinit() override;
+
+        [[nodiscard]] bool initialized() const override;
+
+        [[nodiscard]] uint32_t get_sample_rate() const override;
+        [[nodiscard]] uint16_t get_channels() const override;
+        [[nodiscard]] uint16_t get_bits_per_sample() const override;
+
+    protected:
+        void write(const short* pcm_frames, size_t frame_count) override;
+
+    private:
+        void flush_ogg_pages(bool force_flush);
+        void deinit_impl();
+
+        _speex_encoder_data* m_data = nullptr;
+    };
+}
