@@ -7,8 +7,15 @@ namespace myro
 {
     bool wav_encoder::init(const std::filesystem::path& output_filepath, unsigned int sample_rate, unsigned int channels)
     {
+        if (m_out_file)
+        {
+            deinit(); 
+        }
+
         m_sample_rate = sample_rate;
         m_channels = static_cast<uint16_t>(channels);
+        m_data_bytes_written = 0;
+
         m_out_file = detail::open_file(output_filepath, "wb");
         if (!m_out_file) 
             return false;
