@@ -6,6 +6,8 @@
 
 #include <miniaudio.h>
 
+#include "encoders/vorbis_encoder.h"
+
 namespace myro
 {
 	struct _audio_capture_data
@@ -41,7 +43,7 @@ namespace myro
 			{
 			case audio_file_format::wav:  return wav_encoder::create();
 			case audio_file_format::flac: return flac_encoder::create();
-			case audio_file_format::ogg:
+			case audio_file_format::ogg:  return vorbis_encoder::create(); 
 			case audio_file_format::mp3:
 			case audio_file_format::opus:
 			case audio_file_format::spx:

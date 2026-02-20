@@ -21,7 +21,7 @@ It features a completely automated build system via CMake `FetchContent`, meanin
 | :--- | :---: | :---: | :--- |
 | **WAV** | ✅ | ✅ | *dr_wav (miniaudio)* |
 | **MP3** | ✅ | ❌ | *minimp3* |
-| **OGG / Vorbis**| ✅ | ❌ | *libogg, libvorbis* |
+| **OGG / Vorbis**| ✅ | ✅ | *libogg, libvorbis* |
 | **FLAC** | ✅ | ✅ | *libFLAC* |
 | **Opus** | ✅ | ❌ | *libopus, opusfile* |
 | **Speex** | ✅ | ❌ | *libspeex* |
