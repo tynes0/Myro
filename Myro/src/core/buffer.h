@@ -192,7 +192,7 @@ namespace myro
 		requires detail::valid_align<MinimumSize, Align>
 	struct stack_buffer
 	{
-		uint8_t alignas(Align) data[(MinimumSize + Align - 1) & ~(Align - 1)];
+		alignas(Align) uint8_t data[(MinimumSize + Align - 1) & ~(Align - 1)];
 		static constexpr size_t size = sizeof(data);
 		static constexpr uint64_t align = Align;
 
