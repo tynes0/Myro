@@ -20,7 +20,7 @@ It features a completely automated build system via CMake `FetchContent`, meanin
 | Format | Decoding (Playback) | Encoding (Export) | Powered By |
 | :--- | :---: | :---: | :--- |
 | **WAV** | ✅ | ✅ | *dr_wav (miniaudio)* |
-| **MP3** | ✅ | ❌ | *minimp3* |
+| **MP3** | ✅ | ✅ | *minimp3, lame* |
 | **OGG / Vorbis**| ✅ | ✅ | *libogg, libvorbis* |
 | **FLAC** | ✅ | ✅ | *libFLAC* |
 | **Opus** | ✅ | ✅ | *libopus, opusfile* |

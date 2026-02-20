@@ -9,7 +9,7 @@ int main()
 	myro::log::set_logger_activity(myro::log::level_error | myro::log::level_info | myro::log::level_warn);
 
 	myro::audio_capture capture;
-	capture.init("assets/test.spx", 32000, 2);
+	capture.init("assets/test.mp3", 32000, 2);
 
 	if (capture.start())
 	{

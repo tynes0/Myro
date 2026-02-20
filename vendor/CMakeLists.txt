@@ -6,6 +6,7 @@ add_subdirectory(opus)
 add_subdirectory(opusfile)
 add_subdirectory(flac)
 add_subdirectory(speex)
+add_subdirectory(lame)
 
 # Header-only veya CMake desteği olmayanlar (Bizim yazdıklarımız)
 add_subdirectory(miniaudio)

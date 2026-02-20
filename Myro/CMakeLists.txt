@@ -2,16 +2,13 @@
 file(GLOB_RECURSE SOURCES "src/**.cpp" "src/**.c")
 file(GLOB_RECURSE HEADERS "src/**.h" "src/**.hpp" "src/**.inl")
 
-# Kütüphane hedefi
 add_library(Myro STATIC ${SOURCES} ${HEADERS})
 
-# Include dizinleri
 target_include_directories(Myro PUBLIC 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
     $<INSTALL_INTERFACE:include>
 )
 
-# Preprocessor Tanımları (Premake'deki define'lar)
 target_compile_definitions(Myro PUBLIC
     AL_LIBTYPE_STATIC
     FLAC__NO_DLL
@@ -21,9 +18,7 @@ target_compile_definitions(Myro PUBLIC
     $<$<CONFIG:Dist>:MYRO_DIST>
 )
 
-# Kütüphaneleri Bağla
 target_link_libraries(Myro PUBLIC
-    # 3. Parti
     OpenAL
     Ogg::ogg
     Vorbis::vorbis
@@ -33,8 +28,8 @@ target_link_libraries(Myro PUBLIC
     opusfile
     FLAC::FLAC
     speex
+    Myro::lame
 
-    # Bizim kütüphaneler
     miniaudio
     minimp3
     coco
