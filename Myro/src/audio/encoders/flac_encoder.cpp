@@ -1,4 +1,5 @@
 #include "flac_encoder.h"
+#include "../../core/log.h"
 
 #include <FLAC/stream_encoder.h>
 #include <vector>
@@ -23,6 +24,10 @@ namespace myro
     {
         if (m_data)
         {
+            if (m_data->is_initialized)
+            {
+                deinit_impl();
+            }
             delete m_data;
             m_data = nullptr;
         }
@@ -30,6 +35,12 @@ namespace myro
 
     bool flac_encoder::init(const std::filesystem::path& output_filepath, unsigned int sample_rate, unsigned int channels)
     {
+        if (m_data->is_initialized)
+        {
+            log::warn("flac_encoder already initialized!");
+            return false;
+        }
+
         m_data->flac_encoder = FLAC__stream_encoder_new();
         if (!m_data->flac_encoder)
             return false;
@@ -58,34 +69,13 @@ namespace myro
 
     void flac_encoder::deinit()
     {
-        if (!m_data->is_initialized)
-            return;
-
-        FLAC__stream_encoder_finish(m_data->flac_encoder);
-        FLAC__stream_encoder_delete(m_data->flac_encoder);
-        m_data->flac_encoder = nullptr;
-        m_data->is_initialized = false;
+        deinit_impl();
     }
 
-    bool flac_encoder::initialized() const
-    {
-        return m_data->is_initialized;
-    }
-
-    uint32_t flac_encoder::get_sample_rate() const
-    {
-        return m_data->sample_rate;
-    }
-
-    uint16_t flac_encoder::get_channels() const
-    {
-        return m_data->channels;
-    }
-
-    uint16_t flac_encoder::get_bits_per_sample() const
-    {
-        return m_data->bits_per_sample;
-    }
+    bool flac_encoder::initialized() const { return m_data->is_initialized; }
+    uint32_t flac_encoder::get_sample_rate() const { return m_data->sample_rate; }
+    uint16_t flac_encoder::get_channels() const { return m_data->channels; }
+    uint16_t flac_encoder::get_bits_per_sample() const { return m_data->bits_per_sample; }
     
     void flac_encoder::write(const short* pcm_frames, size_t frame_count)
     {
@@ -97,5 +87,17 @@ namespace myro
             m_data->interleaved_buffer[i] = pcm_frames[i];
 
         FLAC__stream_encoder_process_interleaved(m_data->flac_encoder, m_data->interleaved_buffer.data(), static_cast<uint32_t>(frame_count));
+    }
+
+    void flac_encoder::deinit_impl()
+    {
+        if (!m_data->is_initialized)
+            return;
+
+        FLAC__stream_encoder_finish(m_data->flac_encoder);
+        FLAC__stream_encoder_delete(m_data->flac_encoder);
+        
+        m_data->flac_encoder = nullptr;
+        m_data->is_initialized = false;
     }
 }

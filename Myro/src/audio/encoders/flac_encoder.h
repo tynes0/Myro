@@ -25,6 +25,7 @@ namespace myro
 		[[nodiscard]] uint16_t get_bits_per_sample() const override;
 	private:
 		void write(const short* pcm_frames, size_t frame_count) override;
+		void deinit_impl();
 		
 		friend class audio_capture;
 
