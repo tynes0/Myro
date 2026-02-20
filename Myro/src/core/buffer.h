@@ -128,7 +128,7 @@ namespace myro
 		template<typename T = uint8_t>
 		T* unbound()
 		{
-			T* buf = static_cast<T*>(data);
+			T* buf = reinterpret_cast<T*>(data);
 			data = nullptr;
 			size = 0;
 			return buf;
@@ -151,7 +151,7 @@ namespace myro
 		template <class T>
 		bool can_cast_to() const { return sizeof(T) <= size; }
 		template<typename T>
-		T* as() { return static_cast<T*>(data); }
+		T* as() { return reinterpret_cast<T*>(data); }
 		const uint8_t* begin() const { return data; }
 		const uint8_t* end() const { return data + size; }
 		operator bool() const { return static_cast<bool>(data); }
@@ -218,13 +218,13 @@ namespace myro
 		template<class T>
 		constexpr T* as()
 		{
-			return static_cast<T*>(data);
+			return reinterpret_cast<T*>(data);
 		}
 
 		template<class T>
 		constexpr const T* as() const
 		{
-			return static_cast<const T*>(data);
+			return reinterpret_cast<const T*>(data);
 		}
 
 		template <class T>
