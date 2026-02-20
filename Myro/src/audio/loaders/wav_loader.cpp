@@ -46,7 +46,7 @@ namespace myro
 		size_t buffer_size = decoder.outputChannels * total_frames * sizeof(ma_int16);
 
 		raw_buffer buffer(buffer_size);
-		size_t frames_read = 0;
+		ma_uint64 frames_read = 0;
 		result = ma_decoder_read_pcm_frames(&decoder, buffer.as<void>(), total_frames, &frames_read);
 		if (result != MA_SUCCESS)
 		{
