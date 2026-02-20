@@ -47,10 +47,9 @@ cd Myro
 
 2. **Generate the build files & Compile:**
 ```bash
-mkdir build
-cd build
-cmake ..
-cmake --build . --config Release
+cd scripts
+.\BuildEngine.bat or .\BuildEngine.sh
+.\GenerateProject.bat or .\GenerateProject.sh
 ```
 *(If you are using Visual Studio, simply open the `.sln` file generated in the `build` folder. `Myro-Examples` is already set as the default startup project!)*
 
@@ -61,28 +60,25 @@ cmake --build . --config Release
 Myro is designed to be extremely intuitive. Here is how you initialize the engine and play a sound.
 
 ### 1. Initialization and Playback
+
 ```cpp
 #include <myro/myro.h>
 #include <iostream>
 
 int main() {
-    // Initialize the Audio Engine (OpenAL Backend)
-    if (!myro::audio_engine::init()) {
-        std::cerr << "Failed to initialize Myro Audio Engine!\n";
-        return -1;
-    }
+    // Initialize the Audio Engine
+    myro::audio_engine::init();
 
-    // Load an audio file (Format is automatically detected)
-    auto buffer = myro::load_audio("assets/mp3_test.mp3");
+    // Load an audio source directly through the engine
+    // The format is automatically handled.
+    auto source = myro::audio_engine::load_audio_source("assets/mp3_test.mp3");
 
-    // Create a source, attach the buffer, and play
-    myro::audio_source source;
-    source.set_buffer(buffer);
-    source.play();
+    // Play the source via the engine
+    myro::audio_engine::play(source);
 
-    // Keep the application running while playing
-    while (source.is_playing()) {
-        // Main game/app loop...
+    while (myro::audio_engine::state_of(source) == myro::audio_state::playing)
+    {
+        // .....
     }
 
     // Cleanup
@@ -95,13 +91,13 @@ int main() {
 ```cpp
 myro::listener::set_position(myro::vec3(0.0f, 0.0f, 0.0f));
 
-myro::audio_source fire_sfx;
-fire_sfx.set_buffer(myro::load_audio("assets/fire.ogg"));
+
+std::shared_ptr<myro::audio_source> fire_sfx = myro::audio_engine::load_audio_source("assets/fire.ogg");
 
 // Place the fire 10 units to the right
-fire_sfx.set_position(myro::vec3(10.0f, 0.0f, 0.0f));
-fire_sfx.set_looping(true);
-fire_sfx.play();
+fire_sfx->set_position(myro::vec3(10.0f, 0.0f, 0.0f));
+fire_sfx->set_loop(true);
+myro::audio_engine::play(fire_sfx);
 ```
 
 ---

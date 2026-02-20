@@ -18,5 +18,12 @@ int main()
 
 	myro::log::error("Total loading took: {0}ms", timer.get_time());
 
+	myro::audio_engine::state_of(tests[0]) == myro::audio_state::playing;
+
+	std::shared_ptr<myro::audio_source> fire_sfx = myro::audio_engine::load_audio_source("assets/fire.ogg");
+	fire_sfx->set_position(myro::vec3(10.0f, 0.0f, 0.0f));
+	fire_sfx->set_loop(true);
+	myro::audio_engine::play(fire_sfx);
+
 	myro::audio_engine::shutdown();
 }

@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <cstring>
-#include <type_traits>
 
 #include "log.h"
 
@@ -19,9 +18,9 @@ namespace myro
 
 		raw_buffer() = default;
 		raw_buffer(uint64_t size_in) { allocate(size_in); }
-		raw_buffer(const void* data_in, uint64_t size_in) : data((uint8_t*)data_in), size(size_in) {}
-		raw_buffer(nullptr_t) {};
-		raw_buffer& operator=(nullptr_t) { release(); };
+		raw_buffer(void* data_in, uint64_t size_in) : data(static_cast<uint8_t*>(data_in)), size(size_in) {}
+		raw_buffer(nullptr_t) {}
+		raw_buffer& operator=(nullptr_t) { release(); return *this; }
 
 		raw_buffer(const raw_buffer& other, deep_copy = deep_copy{})
 		{
@@ -84,14 +83,14 @@ namespace myro
 			return *this;
 		}
 
-		static raw_buffer copy(raw_buffer other)
+		static raw_buffer copy(const raw_buffer& other)
 		{
 			raw_buffer result(other.size);
 			std::memcpy(result.data, other.data, other.size);
 			return result;
 		}
 
-		raw_buffer& shallow_copy(raw_buffer other)
+		raw_buffer& shallow_copy(const raw_buffer& other)
 		{
 			release();
 			data = other.data;
@@ -115,14 +114,13 @@ namespace myro
 			if (size_in == size) return;
 			void* temp_data = realloc(data, size_in);
 			MYRO_ASSERT(temp_data, "Memory allocation failed!");
-			data = reinterpret_cast<uint8_t*>(temp_data);
+			data = static_cast<uint8_t*>(temp_data);
 			size = size_in;
 		}
 
 		void release()
 		{
-			if(data)
-				delete[] data;
+			delete[] data;
 			data = nullptr;
 			size = 0;
 		}
@@ -130,17 +128,17 @@ namespace myro
 		template<typename T = uint8_t>
 		T* unbound()
 		{
-			T* buf = (T*)data;
+			T* buf = static_cast<T*>(data);
 			data = nullptr;
 			size = 0;
 			return buf;
 		}
 
 		template <class T>
-		void store(const T& data)
+		void store(const T& value)
 		{
 			allocate(sizeof(T));
-			std::memcpy(this->data, &data, size);
+			std::memcpy(data, &value, size);
 		}
 
 		template <class T>
@@ -153,16 +151,16 @@ namespace myro
 		template <class T>
 		bool can_cast_to() const { return sizeof(T) <= size; }
 		template<typename T>
-		T* as() { return (T*)data; }
+		T* as() { return static_cast<T*>(data); }
 		const uint8_t* begin() const { return data; }
 		const uint8_t* end() const { return data + size; }
-		operator bool() const { return (bool)data; }
-		size_t operator-(const raw_buffer& buffer) { return data - buffer.data; }
+		operator bool() const { return static_cast<bool>(data); }
+		size_t operator-(const raw_buffer& buffer) const { return data - buffer.data; }
 	};
 
 	struct scoped_buffer
 	{
-		scoped_buffer(raw_buffer buffer) : m_buffer(buffer) {}
+		scoped_buffer(raw_buffer buffer) : m_buffer(std::move(buffer)) {}
 		scoped_buffer(uint64_t size) : m_buffer(size) {}
 		~scoped_buffer() { m_buffer.release(); }
 
@@ -190,13 +188,13 @@ namespace myro
 #pragma warning(disable : 6385 6386)
 #endif
 
-	template <size_t _MinimumSize, uint64_t _Align = 1>
-		requires detail::valid_align<_MinimumSize, _Align>
+	template <size_t MinimumSize, uint64_t Align = 1>
+		requires detail::valid_align<MinimumSize, Align>
 	struct stack_buffer
 	{
-		uint8_t alignas(_Align) data[(_MinimumSize + _Align - 1) & ~(_Align - 1)];
+		uint8_t alignas(Align) data[(MinimumSize + Align - 1) & ~(Align - 1)];
 		static constexpr size_t size = sizeof(data);
-		static constexpr uint64_t align = _Align;
+		static constexpr uint64_t align = Align;
 
 		constexpr void zero()
 		{
@@ -220,13 +218,13 @@ namespace myro
 		template<class T>
 		constexpr T* as()
 		{
-			return (T*)data;
+			return static_cast<T*>(data);
 		}
 
 		template<class T>
 		constexpr const T* as() const
 		{
-			return (T*)data;
+			return static_cast<const T*>(data);
 		}
 
 		template <class T>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "encoders/IEncoder.h"
+#include "encoders/iencoder.h"
 #include "audio_file_format.h"
 #include <memory>
 
