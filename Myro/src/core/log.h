@@ -11,6 +11,16 @@ namespace myro
 	class log
 	{
 	public:
+		enum level_ : uint8_t
+		{
+			level_trace = constants::bit<0>,
+			level_info = constants::bit<1>,
+			level_debug = constants::bit<2>,
+			level_warn = constants::bit<3>,
+			level_error = constants::bit<4>,
+			level_critical = constants::bit<5>
+		};
+		
 		template <class... Args>
 		static void trace(const std::string& message, Args... args)
 		{
@@ -53,8 +63,8 @@ namespace myro
 			_critical(formatted_msg);
 		}
 
-		static void set_logger_activity(bool is_active);
-		static bool is_logger_active();
+		static void set_logger_activity(uint8_t active_log_levels);
+		static bool is_logger_active(level_ level);
 	private:
 		static void _trace(const std::string& message);
 		static void _info(const std::string& message);

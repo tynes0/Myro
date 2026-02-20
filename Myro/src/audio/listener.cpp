@@ -54,6 +54,11 @@ namespace myro
 		alListenerfv(AL_ORIENTATION, as_orientation(s_data.forward, s_data.up).data());
 	}
 
+	void listener::set_volume(float volume)
+	{
+		alListenerf(AL_GAIN, volume);
+	}
+
 	void listener::set_position(const vec3& position)
 	{
 		s_data.position = position;
@@ -88,6 +93,13 @@ namespace myro
 		s_data.up = up;
 
 		alListenerfv(AL_ORIENTATION, as_orientation(s_data.forward, s_data.up).data());
+	}
+
+	float listener::get_volume()
+	{
+		ALfloat v;
+		alGetListenerf(AL_GAIN, &v);
+		return static_cast<float>(v);
 	}
 
 	vec3 listener::get_position()

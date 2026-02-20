@@ -10,12 +10,16 @@ namespace myro
 		static void init();
 		static void init(const vec3& position, const vec3& velocity, const vec3& forward, const vec3& up);
 
+		static void set_volume(float volume);
+		
 		static void set_position(const vec3& position);
 		static void set_velocity(const vec3& velocity);
 
 		static void set_forward(const vec3& forward);
 		static void set_up(const vec3& up);
 		static void set_orientation(const vec3& forward, const vec3& up);
+		
+		static float get_volume();
 
 		static vec3 get_position();
 		static vec3 get_velocity();
