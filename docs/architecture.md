@@ -15,17 +15,17 @@ Myro is divided into four main layers:
 
 ## 2. Directory Structure & Modules
 
-The `src/` directory is cleanly separated by responsibilities:
+The `include/` directory is cleanly separated by responsibilities:
 
 ```text
-Myro/src/
+Myro/include/
 ├── audio/               # Public API & Audio Entities
 │   ├── detail/          # Backend implementations (OpenAL) & internal states
 │   ├── loaders/         # Decoders (WAV, MP3, FLAC, Ogg, Opus, Speex)
 │   └── encoders/        # Encoders (WAV, FLAC)
 ├── core/                # Memory, Concurrency, and Logging tools
-├── math/                # Internal math library (vec2, vec3) for spatial audio
-└── util/                # String/Stream formatters
+├── math/                # Internal math library (vec3) for spatial audio
+└── utility/             # String/Stream formatters
 ```
 
 ---

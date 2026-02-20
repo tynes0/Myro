@@ -41,7 +41,7 @@ Myro takes care of all its dependencies automatically.
 
 1. **Clone the repository:**
 ```bash
-git clone [https://github.com/tynes0/Myro.git](https://github.com/tynes0/Myro.git)
+git clone https://github.com/tynes0/Myro.git
 cd Myro
 ```
 
@@ -107,11 +107,11 @@ myro::audio_engine::play(fire_sfx);
 The project is highly modular. Under the hood, the Visual Studio solution is cleanly organized:
 
 * **`Myro`**: The core static library.
-  * `src/audio/`: Core engine, sources, listeners, and effects.
-  * `src/audio/loaders/`: Format-specific decoding logic.
-  * `src/audio/encoders/`: Format-specific encoding logic.
-  * `src/core/`: Threading, logging, and buffer management.
-  * `src/math/`: Internal math library (`vec2`, `vec3`) for spatial calculations.
+  * `include/audio/`: Core engine, sources, listeners, and effects.
+  * `include/audio/loaders/`: Format-specific decoding logic.
+  * `include/audio/encoders/`: Format-specific encoding logic.
+  * `include/core/`: Threading, logging, and buffer management.
+  * `include/math/`: Internal math library (`vec3`) for spatial calculations.
 * **`Myro-Examples`**: The sandbox application for testing and demonstrating features.
 * **`Vendor`**: Automatically managed 3rd-party dependencies (OpenAL, FLAC, Speex, Vorbis, etc.). Cleanly grouped in the IDE.
 
