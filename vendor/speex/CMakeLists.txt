@@ -7,7 +7,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(speex)
 FetchContent_GetProperties(speex)
 
-# --- DUMMY CONFIG.H ---
 set(DUMMY_CONFIG "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 if(NOT EXISTS ${DUMMY_CONFIG})
     file(WRITE ${DUMMY_CONFIG} 
@@ -21,6 +20,21 @@ if(NOT EXISTS ${DUMMY_CONFIG})
     )
 endif()
 
+set(DUMMY_TYPES "${CMAKE_CURRENT_BINARY_DIR}/speex_config_types.h")
+if(NOT EXISTS ${DUMMY_TYPES})
+    file(WRITE ${DUMMY_TYPES} 
+        "/* CMake dummy speex_config_types.h */\n"
+        "#ifndef __SPEEX_TYPES_H__\n"
+        "#define __SPEEX_TYPES_H__\n"
+        "#include <stdint.h>\n"
+        "typedef int16_t spx_int16_t;\n"
+        "typedef uint16_t spx_uint16_t;\n"
+        "typedef int32_t spx_int32_t;\n"
+        "typedef uint32_t spx_uint32_t;\n"
+        "#endif\n"
+    )
+endif()
+
 file(GLOB SPEEX_SOURCES 
     "${speex_SOURCE_DIR}/libspeex/*.c"
     "${speex_SOURCE_DIR}/libspeex/*.h"
@@ -31,7 +45,7 @@ list(FILTER SPEEX_SOURCES EXCLUDE REGEX "/client[^/]*\\.c$")
 list(FILTER SPEEX_SOURCES EXCLUDE REGEX "/mdf\\.c$")
 
 if(NOT SPEEX_SOURCES)
-    message(FATAL_ERROR "Speex kaynak dosyalari bulunamadi!")
+    message(FATAL_ERROR "Speex source files not found!")
 endif()
 
 add_library(speex STATIC ${SPEEX_SOURCES})
