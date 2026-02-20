@@ -6,6 +6,7 @@
 
 #include <miniaudio.h>
 
+#include "encoders/opus_encoder.h"
 #include "encoders/vorbis_encoder.h"
 
 namespace myro
@@ -45,7 +46,7 @@ namespace myro
 			case audio_file_format::flac: return flac_encoder::create();
 			case audio_file_format::ogg:  return vorbis_encoder::create(); 
 			case audio_file_format::mp3:
-			case audio_file_format::opus:
+			case audio_file_format::opus: return opus_encoder::create();
 			case audio_file_format::spx:
 			case audio_file_format::unknown:
 				break;
